@@ -1,0 +1,28 @@
+{
+  "kind": "PUBLICATION_CANDIDATE",
+  "version": 2,
+  "articleKey": "travel-transport-heathrow-t5-to-tottenham-court-road",
+  "proposalType": "CREATE",
+  "expectedCurrentVersion": 0,
+  "proposedVersion": 1,
+  "path": "/travel/transport/heathrow-t5-to-tottenham-court-road",
+  "authority": {
+    "publicationStatus": "AUTHORISED"
+  },
+  "payload": {
+    "publicationStatus": "PUBLISHED",
+    "path": "/travel/transport/heathrow-t5-to-tottenham-court-road",
+    "slug": "heathrow-t5-to-tottenham-court-road",
+    "category": "Travel",
+    "subcategory": "Transport / Getting Around",
+    "articleType": "Comparison / Recommendation Guide",
+    "title": "Getting from Heathrow T5 to Tottenham Court Road",
+    "standfirst": "A comparison of cost and door-to-door fit for two travellers.",
+    "author": "The Gable Editorial",
+    "lastResearched": "2026-10-05",
+    "articleBody": {
+      "format": "MARKDOWN",
+      "content": "## Why Addison Lee Select is recommended\n\nThe Piccadilly/Northern and Elizabeth line options have station-to-station endpoints, so they do not meet the journey’s door-to-door requirement. Blacklane Business Class does not meet the budget requirement.\n\nAmong the options that meet the requirements, Addison Lee Select costs less than SIXT Ride: its fixed quote is £93.12 per vehicle, compared with £97.20 for SIXT Ride.\n\n## Prices and practical differences\n\nThe Piccadilly/Northern route is listed at £5.90 per person on a published fare. The Elizabeth line journey is listed at £15.50 per person, also on a published fare. Both are station-to-station options.\n\nAddison Lee Select offers a door-to-door journey and has a stated maximum of four passengers and three large bags. SIXT Ride is also door-to-door, with a stated maximum of three passengers and two bags.\n\nBlacklane Business Class offers a door-to-door journey for a fixed quote of £121.34 per vehicle. Its stated maximum is three passengers and two bags.\n\n## The comparison’s scope\n\nThis comparison covers the options assessed for this journey, not every possible way to travel."
+    }
+  }
+}
