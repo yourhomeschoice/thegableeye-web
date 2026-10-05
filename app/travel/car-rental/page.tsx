@@ -1,0 +1,2 @@
+import { SiteFooter } from "@/components/site-footer"; import { SiteHeader } from "@/components/site-header"; import { TravelIndex } from "@/components/travel-index"; import { articlesForSubcategory } from "@/lib/publication/indexing";
+export default async function Page() { return <><SiteHeader /><TravelIndex title="Car Rental" standfirst="Scenario-led car-rental research and comparisons." articles={await articlesForSubcategory("Car Rental")} /><SiteFooter /></>; }

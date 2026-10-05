@@ -1,69 +1,129 @@
-import Image from "next/image";
+import Link from "next/link";
+import { PublicationCard } from "@/components/publication-card";
+import { PublicationImage } from "@/components/publication-image";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
+import {
+  publishedTravelArticles,
+  travelSections,
+} from "@/lib/publication/indexing";
 
-export default function Home() {
+// The ordered set determines the temporary homepage lead and secondary cards;
+// it is presentation ordering, not editorial curation.
+export default async function Home() {
+  const articles = await publishedTravelArticles();
+  const [lead, ...latest] = articles;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <>
+      <SiteHeader />
+
+      <main>
+        {lead && (
+          <section className="hero site-shell">
+            <div className="hero-copy">
+              <p className="eyebrow">
+                {lead.category} / {lead.subcategory}
+              </p>
+
+              <h1 className="editorial">{lead.title}</h1>
+
+              <p className="hero-summary">{lead.standfirst}</p>
+
+              <Link className="button button-primary" href={lead.path}>
+                Read article <span aria-hidden="true">→</span>
+              </Link>
+            </div>
+
+            <PublicationImage image={lead.image} variant="hero" />
+          </section>
+        )}
+
+        <section className="content-section site-shell">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">Current research</p>
+              <h2 className="editorial">
+                Useful questions, carefully framed.
+              </h2>
+            </div>
+
+            <Link className="text-link" href="/travel/">
+              Travel coverage <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+
+          {latest.length > 0 && (
+            <div className="article-grid">
+              {latest.slice(0, 3).map((article) => (
+                <PublicationCard
+                  key={article.path}
+                  article={article}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+
+        {travelSections.map((section) => {
+          const items = articles.filter(
+            (article) => article.subcategory === section.name,
+          );
+
+          return items.length ? (
+            <section
+              className="content-section category-section"
+              key={section.name}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+              <div className="site-shell">
+                <div className="section-heading">
+                  <div>
+                    <p className="eyebrow">Travel</p>
+                    <h2 className="editorial">{section.name}</h2>
+                  </div>
+
+                  <Link className="text-link" href={section.href}>
+                    All articles <span aria-hidden="true">→</span>
+                  </Link>
+                </div>
+
+                <div className="article-grid">
+                  {items.slice(0, 4).map((article) => (
+                    <PublicationCard
+                      key={article.path}
+                      article={article}
+                    />
+                  ))}
+                </div>
+              </div>
+            </section>
+          ) : null;
+        })}
+
+        <section className="approach-section site-shell">
+          <div>
+            <p className="eyebrow">Our approach</p>
+            <h2 className="editorial">
+              Independent.
+              <br />
+              Evidence-led.
+            </h2>
+          </div>
+
+          <div className="approach-copy">
+            <p>
+              We explain the scope of a comparison, keep uncertainty visible
+              and make recommendations only where evidence supports them.
+            </p>
+
+            <Link className="text-link" href="/how-we-research/">
+              How we research <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+        </section>
       </main>
-    </div>
+
+      <SiteFooter />
+    </>
   );
 }

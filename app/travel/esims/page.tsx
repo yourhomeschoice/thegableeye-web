@@ -1,0 +1,2 @@
+import { SiteFooter } from "@/components/site-footer"; import { SiteHeader } from "@/components/site-header"; import { TravelIndex } from "@/components/travel-index"; import { articlesForSubcategory } from "@/lib/publication/indexing";
+export default async function Page() { return <><SiteHeader /><TravelIndex title="eSIMs & Connectivity" standfirst="Research for staying connected while you travel." articles={await articlesForSubcategory("eSIMs & Connectivity")} /><SiteFooter /></>; }
