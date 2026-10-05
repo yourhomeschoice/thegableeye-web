@@ -1,0 +1,28 @@
+{
+  "kind": "PUBLICATION_CANDIDATE",
+  "version": 2,
+  "articleKey": "travel-esims-japan-esim-hotspot-comparison",
+  "proposalType": "CREATE",
+  "expectedCurrentVersion": 0,
+  "proposedVersion": 1,
+  "path": "/travel/esims/japan-esim-hotspot-comparison",
+  "authority": {
+    "publicationStatus": "AUTHORISED"
+  },
+  "payload": {
+    "publicationStatus": "PUBLISHED",
+    "path": "/travel/esims/japan-esim-hotspot-comparison",
+    "slug": "japan-esim-hotspot-comparison",
+    "category": "Travel",
+    "subcategory": "eSIMs",
+    "articleType": "Comparison / Recommendation Guide",
+    "title": "Japan eSIM comparison: Nomad for a 14-day trip",
+    "standfirst": "For a 14-day Japan trip requiring at least 10 GB and hotspot access, Nomad is our pick among the five providers compared here.",
+    "author": "The Gable Editorial",
+    "lastResearched": "2026-10-05",
+    "articleBody": {
+      "format": "MARKDOWN",
+      "content": "For a 14-day trip to Japan, we recommend Nomad’s 10 GB package, valid for 30 days, among the five providers compared here. Its cited price is $16, the lowest of the prices listed for these options.\n\n## Why Nomad is our pick\n\nThe recommendation is based on cost in this comparison. The cited scenario costs were $16 for Nomad, $16.50 for Ubigi, $17.99 for Saily and $50.50 for Holafly. Airalo’s Moshi Moshi package is listed at $18 for 10 GB over 30 days.\n\n## Package differences\n\nNomad, Ubigi, Saily and Airalo each list a fixed 10 GB allowance for 30 days. Nomad supports hotspot or tethering and offers top-ups. Ubigi allows data sharing, while Saily supports hotspot or tethering, activates automatically on arrival in Japan and offers top-ups.\n\nAiralo’s Moshi Moshi package is also listed as 10 GB for 30 days. Holafly differs: it offers unlimited data for 15 days and supports hotspot or tethering, with 1 GB of shareable data per day.\n\n## Details not established\n\nThe research did not establish Airalo’s hotspot policy or network technology. Saily’s and Ubigi’s network technologies were not researched. For Nomad, network technology and whether voice or SMS is included were not researched.\n\nThis comparison covers five providers and does not establish a market-wide result."
+    }
+  }
+}
