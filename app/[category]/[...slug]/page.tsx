@@ -12,6 +12,10 @@ type ArticleRouteProps = {
   params: Promise<{ category: string; slug: string[] }>;
 };
 
+// Only routes explicitly returned by generateStaticParams may be served.
+// Unapproved publication paths must not be generated on demand.
+export const dynamicParams = false;
+
 function pathnameFromParams(category: string, slug: string[]) {
   return `/${[category, ...slug].join("/")}`;
 }

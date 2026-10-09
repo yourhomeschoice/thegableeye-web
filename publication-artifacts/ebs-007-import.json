@@ -1,0 +1,8 @@
+{
+  "baseline_key": "coffee-espresso-machine-ebs-007-v1",
+  "article_key": "coffee-espresso-machine-comparison",
+  "heading_paragraphs": [7, 15, 21, 28, 42, 44, 50, 55, 58],
+  "expected_table_count": 1,
+  "required_prices": ["$489.99", "$499.00", "$449.99", "$699.95"]
+  ,"preview": {"title": "THE GABLE'S ESPRESSO MACHINE WITH A GRINDER PICK: BREVILLE BARISTA EXPRESS BES870XL", "category": "Home / Coffee Machines", "table_presentations": ["COMPARISON_TABLE"], "trim_trailing_empty_cells": [0]}
+}

@@ -1,104 +1,268 @@
 import Link from "next/link";
-import { PublicationCard } from "@/components/publication-card";
-import { PublicationImage } from "@/components/publication-image";
-import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import {
-  publishedTravelArticles,
-  travelSections,
-} from "@/lib/publication/indexing";
+import { SiteFooter } from "@/components/site-footer";
+import Image from "next/image";
+import { AffiliateDisclosure } from "@/components/affiliate-disclosure";
+import { HomepageLaunchArticlePlacementCard } from "@/components/launch-article-placement-card";
+import { getDevelopmentArticlePlacement, getDevelopmentTravelAdapterPlacement, getDevelopmentFridgeFreezerPlacement, getDevelopmentCoffeeEspressoPlacement } from "@/lib/launch-baseline/article-placement";
 
-// The ordered set determines the temporary homepage lead and secondary cards;
-// it is presentation ordering, not editorial curation.
+const categories = [
+  {
+    name: "Travel",
+    icon: "✈",
+    description: "eSIMs, transport, car hire and more",
+    href: "/travel/",
+    available: true,
+  },
+  {
+    name: "Tech",
+    icon: "⌘",
+    description: "Devices, software and everyday technology",
+    href: "/tech/",
+    available: false,
+  },
+  {
+    name: "Home",
+    icon: "⌂",
+    description: "Appliances, kitchen and home essentials",
+    href: "/home/",
+    available: false,
+  },
+  {
+    name: "Lifestyle",
+    icon: "♧",
+    description: "Outdoor, family and everyday life",
+    href: "/lifestyle/",
+    available: false,
+  },
+];
+
+const latestPlaceholders = [
+  {
+    id: 1,
+    category: "TRAVEL · eSIMs",
+    title: "Choosing an eSIM for international travel",
+    description: "Explore connectivity options and the practical details worth comparing.",
+    image: "/images/esim.webp",
+    alt: "Digital SIM card illustration with electronic circuitry",
+  },
+  {
+    id: 2,
+    category: "HOME · COFFEE",
+    title: "Finding the right home espresso machine",
+    description: "A closer look at the features and everyday considerations of home espresso.",
+    image: "/images/espresso.webp",
+    alt: "Cup of coffee with latte art on an espresso machine",
+  },
+  {
+    id: 3,
+    category: "TECH · LAPTOPS",
+    title: "Choosing a laptop for everyday use",
+    description: "Exploring practical features and considerations for everyday computing.",
+    image: "/images/laptop.webp",
+    alt: "Laptop on a bright minimalist desk",
+  },
+];
+
+const homepageSections = [
+  {
+    name: "Travel",
+    description:
+      "Your travel comparisons in one place. Practical advice on staying connected, travel accessories and making the most of your journey.",
+    topics: ["eSIMs", "Travel accessories", "Luggage"],
+  },
+  {
+    name: "Tech",
+    description:
+      "Technology explained without the jargon. Clear comparisons to help you choose devices and digital tools that suit your needs.",
+    topics: ["Laptops", "Smartphones", "Accessories"],
+  },
+  {
+    name: "Home",
+    description:
+      "Make more informed choices for everyday living. From kitchen equipment to home essentials, we focus on what matters in practice.",
+    topics: ["Coffee machines", "Kitchen appliances", "Home essentials"],
+  },
+  {
+    name: "Lifestyle",
+    description:
+      "Useful comparisons for life beyond the essentials. Thoughtful guidance on outdoor gear, family products and everyday purchases.",
+    topics: ["Outdoor", "Family", "Everyday living"],
+  },
+];
+
 export default async function Home() {
-  const articles = await publishedTravelArticles();
-  const [lead, ...latest] = articles;
+  const developmentArticle = await getDevelopmentArticlePlacement();
+  const travelAdapterArticle = await getDevelopmentTravelAdapterPlacement();
+  const fridgeFreezerArticle = await getDevelopmentFridgeFreezerPlacement();
+  const coffeeEspressoArticle = await getDevelopmentCoffeeEspressoPlacement();
 
   return (
     <>
       <SiteHeader />
 
       <main>
-        {lead && (
-          <section className="hero site-shell">
-            <div className="hero-copy">
-              <p className="eyebrow">
-                {lead.category} / {lead.subcategory}
-              </p>
+        <div className="homepage-layout site-shell">
+          <div className="homepage-main">
+            <section className="homepage-feature" aria-labelledby="homepage-feature-title">
+              <div className="homepage-feature-content">
+                <p className="eyebrow">Featured guide</p>
+                <h1 id="homepage-feature-title" className="editorial">
+                  Independent advice for better decisions.
+                </h1>
+                <p>
+                  Clear comparisons, practical research and recommendations
+                  supported by evidence.
+                </p>
+                <span className="homepage-coming-soon">
+                  Featured article coming soon
+                </span>
+              </div>
+              <div className="homepage-feature-visual">
+  <Image
+    src="/images/homepage-feature.webp"
+    alt="Editorial collage featuring travel, home and technology"
+    fill
+    priority
+    sizes="(max-width: 760px) 100vw, (max-width: 1050px) 50vw, 35vw"
+    style={{ objectFit: "cover" }}
+  />
+</div>
+            </section>
 
-              <h1 className="editorial">{lead.title}</h1>
+            <nav className="homepage-categories" aria-label="Explore categories">
+              {categories.map((category) => {
+                const content = (
+                  <>
+                    <span className="homepage-category-icon" aria-hidden="true">
+                      {category.icon}
+                    </span>
+                    <span className="homepage-category-copy">
+                      <strong>{category.name}</strong>
+                      <small>{category.description}</small>
+                    </span>
+                  </>
+                );
 
-              <p className="hero-summary">{lead.standfirst}</p>
-
-              <Link className="button button-primary" href={lead.path}>
-                Read article <span aria-hidden="true">→</span>
-              </Link>
-            </div>
-
-            <PublicationImage image={lead.image} variant="hero" />
-          </section>
-        )}
-
-        <section className="content-section site-shell">
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">Current research</p>
-              <h2 className="editorial">
-                Useful questions, carefully framed.
-              </h2>
-            </div>
-
-            <Link className="text-link" href="/travel/">
-              Travel coverage <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-
-          {latest.length > 0 && (
-            <div className="article-grid">
-              {latest.slice(0, 3).map((article) => (
-                <PublicationCard
-                  key={article.path}
-                  article={article}
-                />
-              ))}
-            </div>
-          )}
-        </section>
-
-        {travelSections.map((section) => {
-          const items = articles.filter(
-            (article) => article.subcategory === section.name,
-          );
-
-          return items.length ? (
-            <section
-              className="content-section category-section"
-              key={section.name}
-            >
-              <div className="site-shell">
-                <div className="section-heading">
-                  <div>
-                    <p className="eyebrow">Travel</p>
-                    <h2 className="editorial">{section.name}</h2>
-                  </div>
-
-                  <Link className="text-link" href={section.href}>
-                    All articles <span aria-hidden="true">→</span>
+                return category.available ? (
+                  <Link key={category.name} href={category.href} className="homepage-category">
+                    {content}
                   </Link>
-                </div>
+                ) : (
+                  <div key={category.name} className="homepage-category homepage-category-inactive">
+                    {content}
+                  </div>
+                );
+              })}
+            </nav>
 
-                <div className="article-grid">
-                  {items.slice(0, 4).map((article) => (
-                    <PublicationCard
-                      key={article.path}
-                      article={article}
-                    />
-                  ))}
-                </div>
+            <AffiliateDisclosure variant="site" />
+
+            <section className="homepage-latest" aria-labelledby="homepage-latest-title">
+              <div className="homepage-section-heading">
+                <h2 id="homepage-latest-title" className="editorial">
+                  Latest from The Gable
+                </h2>
+              </div>
+
+              <div className="homepage-latest-grid">
+                {latestPlaceholders.map((item, index) =>
+                  index === 0 && developmentArticle ? (
+                    <HomepageLaunchArticlePlacementCard key={developmentArticle.id} article={developmentArticle} />
+                  ) : index === 1 && coffeeEspressoArticle ? (
+                    <HomepageLaunchArticlePlacementCard key={coffeeEspressoArticle.id} article={coffeeEspressoArticle} />
+                  ) : (
+                  <article className="homepage-latest-card" key={item.id}>
+                    <div className="homepage-card-image">
+  <Image
+    src={item.image}
+    alt={item.alt}
+    fill
+    sizes="(max-width: 760px) 100vw, (max-width: 1050px) 50vw, 25vw"
+    style={{ objectFit: "cover" }}
+  />
+</div>
+                    <div className="homepage-card-content">
+                      <p className="eyebrow">{item.category}</p>
+                      <h3 className="editorial">{item.title}</h3>
+                      <p>{item.description}</p>
+                    </div>
+                  </article>
+                  ),
+                )}
               </div>
             </section>
-          ) : null;
-        })}
+
+            {homepageSections.map((section) => (
+              <section
+                className="homepage-category-section"
+                key={section.name}
+                aria-labelledby={`section-${section.name.toLowerCase()}`}
+              >
+                <div className="homepage-category-section-heading">
+                  <h2
+                    id={`section-${section.name.toLowerCase()}`}
+                    className="editorial"
+                  >
+                    {section.name}
+                  </h2>
+                  <p>{section.description}</p>
+                </div>
+
+                <div className="homepage-latest-grid">
+                  {section.topics.map((topic, index) =>
+                    section.name === "Travel" && index === 0 && developmentArticle ? (
+                      <HomepageLaunchArticlePlacementCard key={developmentArticle.id} article={developmentArticle} />
+                    ) : section.name === "Travel" && index === 1 && travelAdapterArticle ? (
+                      <HomepageLaunchArticlePlacementCard key={travelAdapterArticle.id} article={travelAdapterArticle} />
+                    ) : section.name === "Home" && index === 1 && fridgeFreezerArticle ? (
+                      <HomepageLaunchArticlePlacementCard key={fridgeFreezerArticle.id} article={fridgeFreezerArticle} />
+                    ) : section.name === "Home" && index === 0 && coffeeEspressoArticle ? (
+                      <HomepageLaunchArticlePlacementCard key={coffeeEspressoArticle.id} article={coffeeEspressoArticle} />
+                    ) : (
+                    <article className="homepage-latest-card" key={topic}>
+                      <div className="homepage-card-image homepage-category-placeholder-image">
+                        <span>EDITORIAL IMAGE</span>
+                      </div>
+                      <div className="homepage-card-content">
+                        <p className="eyebrow">
+                          {section.name.toUpperCase()} · {topic.toUpperCase()}
+                        </p>
+                        <h3 className="editorial">{topic}</h3>
+                        <p>Article coming soon.</p>
+                      </div>
+                    </article>
+                    ),
+                  )}
+                </div>
+              </section>
+            ))}
+          </div>
+
+          <aside className="homepage-sidebar" aria-label="Featured and popular guides">
+            <section className="homepage-sidebar-feature">
+              <p className="eyebrow">Featured guide</p>
+              <div className="homepage-sidebar-image">
+                <span>EDITORIAL IMAGE</span>
+              </div>
+              <h2 className="editorial">Featured guide placeholder</h2>
+              <p>Our next featured comparison will appear here.</p>
+            </section>
+
+            <section className="homepage-popular">
+              <h2 className="editorial">Popular guides</h2>
+              <p className="homepage-sidebar-note">
+                Selected guides will appear here as the publication grows.
+              </p>
+              {[1, 2, 3, 4].map((number) => (
+                <div className="homepage-popular-item" key={number}>
+                  <div className="homepage-popular-image" aria-hidden="true" />
+                  <span>Guide placeholder {number}</span>
+                </div>
+              ))}
+            </section>
+          </aside>
+        </div>
 
         <section className="approach-section site-shell">
           <div>
@@ -109,13 +273,11 @@ export default async function Home() {
               Evidence-led.
             </h2>
           </div>
-
           <div className="approach-copy">
             <p>
               We explain the scope of a comparison, keep uncertainty visible
               and make recommendations only where evidence supports them.
             </p>
-
             <Link className="text-link" href="/how-we-research/">
               How we research <span aria-hidden="true">→</span>
             </Link>
