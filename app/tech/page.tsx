@@ -1,4 +1,5 @@
 import { CategoryLandingPage, type CategoryLandingConfig } from "@/components/category-landing-page";
+import { getDevelopmentLaptopEbs008Placement } from "@/lib/launch-baseline/article-placement";
 
 // Launch placeholders only: no Supabase or test-article publication feed.
 const config: CategoryLandingConfig = {
@@ -39,6 +40,7 @@ const config: CategoryLandingConfig = {
   ],
 };
 
-export default function Page() {
-  return <CategoryLandingPage config={config} />;
+export default async function Page() {
+  const laptopArticle = await getDevelopmentLaptopEbs008Placement();
+  return <CategoryLandingPage config={config} developmentArticle={laptopArticle} />;
 }

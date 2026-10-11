@@ -8,6 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test:canonical-body": "tsx scripts/test-canonical-publication-body.ts",
+    "test:travel-adapter-html-rendering": "tsx scripts/test-travel-adapter-html-rendering.ts",
+    "test:approved-baseline-publication-preparation": "tsx scripts/test-canonical-publication-body.ts",
     "test:japan-esim-launch-baseline": "tsx scripts/test-japan-esim-launch-baseline.ts",
     "test:development-article-placement": "tsx scripts/test-development-article-placement.ts",
     "test:launch-baseline-table-presentation": "tsx scripts/test-launch-baseline-table-presentation.ts",
@@ -23,6 +25,7 @@
   },
   "dependencies": {
     "next": "16.3.8",
+    "parse5": "^7.3.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-markdown": "^10.1.0"

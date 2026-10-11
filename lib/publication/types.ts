@@ -20,10 +20,17 @@ export type PublicationImage = {
   readonly credit?: string;
 };
 
-export type ArticleBody = {
+export type MarkdownArticleBody = {
   readonly format: "MARKDOWN";
   readonly content: string;
 };
+
+export type EditorialHtmlArticleBody = {
+  readonly format: "HTML";
+  readonly content: string;
+};
+
+export type ArticleBody = MarkdownArticleBody | EditorialHtmlArticleBody;
 
 type PublicationArticleCommon = {
   readonly publicationStatus: "PUBLISHED";

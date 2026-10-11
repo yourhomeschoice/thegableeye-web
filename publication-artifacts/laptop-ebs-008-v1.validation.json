@@ -1,0 +1,107 @@
+{
+    "baseline_key":  "laptop-ebs-008-v1",
+    "article_key":  "laptop-comparison-under-800",
+    "source_filename":  "EBS-008 - Laptop.docx",
+    "sha256":  "2842382b843aedc21437fc45a0482ec084f07bb031d9fc2e7a1f3874335b164c",
+    "paragraphs":  [
+                       "THE GABLE\u0026apos;S LAPTOP UNDER $800 PICK: HP LAPTOP - B0H6PZFFW1",
+                       "Five laptops, five different configurations and one important question: which is the strongest choice for everyday productivity, heavy browser use and multitasking? We compare the advertised specifications, identify the practical differences and explain what buyers should check before ordering.",
+                       "Our verdict",
+                       "If you\u0026apos;re shopping for a Windows laptop under $800, the five models in this comparison offer several potentially attractive configurations, including Intel Core i5 and i7 processors, an AMD Ryzen option, and advertised memory capacities of up to 16GB.",
+                       "Our choice is the HP Laptop (B0H6PZFFW1). This laptop is intended for substantial browser multitasking, Microsoft Office and coding and these distinctions matter. The exact configuration you receive is more important than an impressive product title.",
+                       "Our comparison identifies what each listing offers on paper and what still needs verification before purchase.",
+                       "The five laptops at a glance",
+                       "Specifications are drawn from the available listing and supporting research evidence. They describe advertised configurations, not independently verified delivered units.",
+                       "A closer look at each laptop",
+                       "1. HP Laptop — Intel Core i7-1355U — $799.99",
+                       "Strengths: This is the powerhouse of the group. The Intel Core i7-1355U offers the highest peak performance speeds, and the massive 1TB SSD gives you double the storage space of every other option listed.",
+                       "Our assessment: It stands out due to the larger storage capacity, making it ideal for heavy multitasking, large business files, and longevity.",
+                       "2. Dell 15.6-inch touchscreen — Intel Core i5-1334U — $739.00",
+                       "Strengths: Features a highly reliable, efficient 13th Gen Intel Core i5 processor that easily handles daily productivity, web browsing, and streaming. The touchscreen functionality adds excellent navigation flexibility.",
+                       "Our assessment: A dependable, well-rounded choice. This is a solid everyday machine if you prefer the Dell ecosystem and build style over HP.",
+                       "3. HP Pavilion touchscreen — Intel Core i5-1334U — $669.00",
+                       "Strengths: Offers identical performance specs to the Dell, but inside the Pavilion chassis, which typically provides a slightly more premium consumer design, decent keys, and good everyday media consumption features.",
+                       "Our assessment: It is a perfect match for students or home users who want a balance of touchscreen versatility and steady 13th Gen Intel performance.",
+                       "4. HP Ryzen touchscreen — advertised Ryzen 7 7730U — $769.99",
+                       "Strengths: It delivers excellent multi-core efficiency and integrated graphics performance compared to the i5 models. which is great for light casual gaming or basic photo editing.",
+                       "Our assessment: Is best for light casual gaming or basic photo editing.",
+                       "5. HP 17.3-inch business laptop — Intel Core i7-1255U — $799.99",
+                       "Strengths: Offers a massive 17.3-inch screen workspace, which is perfect for replacing a desktop or working on large spreadsheets without needing an external monitor.",
+                       "Our assessment: Best for stationary users. While the screen is great, keep in mind it uses an older 12th Gen Intel processor and the massive size makes it heavy and awkward to carry around in a backpack.",
+                       "What matters most for multitasking, Office and coding?",
+                       "For this buying scenario, we would focus on four practical considerations.",
+                       "Memory: The advertised 16GB configurations are relevant to the intended workload, but RAM capacity alone does not establish how well a laptop performs.",
+                       "Storage: An SSD is an important specification to verify. The advertised 1TB configuration of the HP i7-1355U provides more stated capacity than a 512GB model, but only if the delivered configuration matches the listing.",
+                       "Processor and operating system: The five listings include several Intel Core and AMD Ryzen identifiers.",
+                       "Seller configuration: A laptop advertised with 16GB RAM or a larger SSD may be factory-configured or modified after manufacture. Buyers should establish which applies, especially where manufacturer and seller specifications appear inconsistent.",
+                       "What we recommend checking before buying",
+                       "Ask for confirmation of the installed RAM, SSD capacity, Windows edition and whether any components have been upgraded by the seller. Where specifications conflict, request clarification in writing.",
+                       "It is also worth checking the warranty terms and return conditions for the exact offer rather than assuming they are identical across sellers.",
+                       "The Gable\u0026apos;s conclusion",
+                       "The HP i7-1355U has a generous 1TB SSD, 16GB RAM and Intel Core i7-1355U processor, therefore stands out above the rest."
+                   ],
+    "tables":  [
+                   [
+                       [
+                           "Product",
+                           "Processor",
+                           "RAM",
+                           "Storage",
+                           "Windows"
+                       ],
+                       [
+                           "Dell touchscreen — B0HL8D7CYLPrice: $739.00",
+                           "Intel Core i5-1334U",
+                           "16GB",
+                           "512GB SSD",
+                           "Windows 11 Home"
+                       ],
+                       [
+                           "HP Pavilion touchscreen — B0FD1TGSQLPrice: $669.00",
+                           "Intel Core i5-1334U",
+                           "16GB",
+                           "512GB SSD ",
+                           "Windows 11 Home"
+                       ],
+                       [
+                           "HP Ryzen touchscreen — B0HJ4VWXW5Price: $769.99",
+                           "Ryzen 7 7730U claimed; conflicting identification",
+                           "16GB",
+                           "512GB SSD ",
+                           "Windows 11 Home"
+                       ],
+                       [
+                           "HP laptop — B0H6PZFFW1Price: $799.99",
+                           "Intel Core i7-1355U",
+                           "16GB",
+                           "1TB SSD",
+                           "Windows 11 Home"
+                       ],
+                       [
+                           "HP 17.3-inch laptop — B0H7S7HCX6Price: $799.99",
+                           "Intel Core i7-1255U",
+                           "16GB ",
+                           "512GB SSD",
+                           "Windows 11 Home"
+                       ]
+                   ]
+               ],
+    "preview":  {
+                    "title":  "THE GABLE\u0027S LAPTOP UNDER $800 PICK: HP LAPTOP - B0H6PZFFW1",
+                    "category":  "Tech / Laptops",
+                    "table_presentations":  [
+                                                "COMPARISON_TABLE"
+                                            ]
+                },
+    "hyperlink_destinations":  "ignored",
+    "editorial_status": "EDITORIAL_REVIEW_COMPLETE",
+    "release_status": "NOT_RELEASED",
+    "affiliate_disclosure": true,
+    "product_links": [
+        { "identifier": "B0HL8D7CYL", "href": "https://www.amazon.com/dp/B0HL8D7CYL" },
+        { "identifier": "B0FD1TGSQL", "href": "https://www.amazon.com/dp/B0FD1TGSQL" },
+        { "identifier": "B0HJ4VWXW5", "href": "https://www.amazon.com/dp/B0HJ4VWXW5" },
+        { "identifier": "B0H6PZFFW1", "href": "https://www.amazon.com/dp/B0H6PZFFW1" },
+        { "identifier": "B0H7S7HCX6", "href": "https://www.amazon.com/dp/B0H7S7HCX6" }
+    ]
+}

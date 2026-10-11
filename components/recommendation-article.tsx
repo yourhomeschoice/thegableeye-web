@@ -4,16 +4,18 @@ import { ComparedOptions } from "@/components/compared-options";
 import { RecommendationPanel } from "@/components/recommendation-panel";
 import type { RecommendationComparisonArticle } from "@/lib/publication/types";
 import { subcategoryHref } from "@/lib/publication/indexing";
+import { sanitiseTrustedEditorialHtml } from "@/lib/publication/editorial-html";
 
 type RecommendationArticleProps = { article: RecommendationComparisonArticle };
 
 export function RecommendationArticle({ article }: RecommendationArticleProps) {
   if (article.articleBody) {
+    const body = article.articleBody;
     return (
       <main className="article-page"><article className="article-shell">
-        <ArticleChrome article={article} />
+        <ArticleChrome article={article} showTitle={body.format !== "HTML"} />
         <div className="article-reading article-markdown">
-          <ReactMarkdown>{article.articleBody.content}</ReactMarkdown>
+          {body.format === "MARKDOWN" ? <ReactMarkdown>{body.content}</ReactMarkdown> : <div className="article-html" dangerouslySetInnerHTML={{ __html: sanitiseTrustedEditorialHtml(body.content) }} />}
         </div>
       </article></main>
     );
@@ -45,10 +47,10 @@ export function RecommendationArticle({ article }: RecommendationArticleProps) {
   );
 }
 
-function ArticleChrome({ article }: RecommendationArticleProps) {
+function ArticleChrome({ article, showTitle = true }: RecommendationArticleProps & { showTitle?: boolean }) {
   return <>
     <nav className="breadcrumb" aria-label="Breadcrumb"><Link href="/travel/">{article.category}</Link><span aria-hidden="true">/</span>{subcategoryHref(article.subcategory) ? <Link href={subcategoryHref(article.subcategory)!}>{article.subcategory}</Link> : <span>{article.subcategory}</span>}</nav>
-    <header className="article-header"><p className="eyebrow">{article.articleType}</p><h1 className="editorial">{article.title}</h1><p className="article-standfirst">{article.standfirst}</p><div className="article-meta"><span>By {article.author}</span><span>Last researched: {article.lastResearched}</span></div></header>
+    <header className="article-header"><p className="eyebrow">{article.articleType}</p>{showTitle && <h1 className="editorial">{article.title}</h1>}<p className="article-standfirst">{article.standfirst}</p><div className="article-meta"><span>By {article.author}</span><span>Last researched: {article.lastResearched}</span></div></header>
     {article.affiliateDisclosure && <p className="affiliate-disclosure"><strong>Affiliate disclosure:</strong> {article.affiliateDisclosure}</p>}
   </>;
 }

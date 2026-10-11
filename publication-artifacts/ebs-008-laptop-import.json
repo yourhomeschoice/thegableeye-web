@@ -1,0 +1,12 @@
+{
+  "baseline_key": "laptop-ebs-008-v1",
+  "article_key": "laptop-comparison-under-800",
+  "heading_paragraphs": [3, 7, 9, 25, 31, 34],
+  "expected_table_count": 1,
+  "required_prices": ["$739.00", "$669.00", "$769.99", "$799.99"],
+  "preview": {
+    "title": "THE GABLE'S LAPTOP UNDER $800 PICK: HP LAPTOP - B0H6PZFFW1",
+    "category": "Tech / Laptops",
+    "table_presentations": ["COMPARISON_TABLE"]
+  }
+}

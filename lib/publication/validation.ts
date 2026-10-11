@@ -1,4 +1,5 @@
 import type { RecommendationComparisonArticle } from "./types";
+import { sanitiseTrustedEditorialHtml } from "./editorial-html";
 
 type ValidationSuccess = {
   valid: true;
@@ -91,10 +92,17 @@ export function validatePublicationArticle(
     if (!isObject(value.articleBody)) {
       errors.push("articleBody must be an object.");
     } else {
-      if (value.articleBody.format !== "MARKDOWN") {
-        errors.push("articleBody.format must be MARKDOWN.");
+      if (value.articleBody.format !== "MARKDOWN" && value.articleBody.format !== "HTML") {
+        errors.push("articleBody.format must be MARKDOWN or HTML.");
       }
       validateText(value.articleBody.content, "articleBody.content", errors);
+      if (value.articleBody.format === "HTML" && hasText(value.articleBody.content)) {
+        try {
+          sanitiseTrustedEditorialHtml(value.articleBody.content);
+        } catch (error) {
+          errors.push(error instanceof Error ? error.message : "articleBody HTML is invalid.");
+        }
+      }
     }
   }
 

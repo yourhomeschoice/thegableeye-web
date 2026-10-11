@@ -4,7 +4,7 @@ import { SiteFooter } from "@/components/site-footer";
 import Image from "next/image";
 import { AffiliateDisclosure } from "@/components/affiliate-disclosure";
 import { HomepageLaunchArticlePlacementCard } from "@/components/launch-article-placement-card";
-import { getDevelopmentArticlePlacement, getDevelopmentTravelAdapterPlacement, getDevelopmentFridgeFreezerPlacement, getDevelopmentCoffeeEspressoPlacement } from "@/lib/launch-baseline/article-placement";
+import { getDevelopmentArticlePlacement, getDevelopmentTravelAdapterPlacement, getDevelopmentFridgeFreezerPlacement, getDevelopmentCoffeeEspressoPlacement, getDevelopmentLaptopEbs008Placement } from "@/lib/launch-baseline/article-placement";
 
 const categories = [
   {
@@ -96,6 +96,7 @@ export default async function Home() {
   const travelAdapterArticle = await getDevelopmentTravelAdapterPlacement();
   const fridgeFreezerArticle = await getDevelopmentFridgeFreezerPlacement();
   const coffeeEspressoArticle = await getDevelopmentCoffeeEspressoPlacement();
+  const laptopArticle = await getDevelopmentLaptopEbs008Placement();
 
   return (
     <>
@@ -171,6 +172,8 @@ export default async function Home() {
                     <HomepageLaunchArticlePlacementCard key={developmentArticle.id} article={developmentArticle} />
                   ) : index === 1 && coffeeEspressoArticle ? (
                     <HomepageLaunchArticlePlacementCard key={coffeeEspressoArticle.id} article={coffeeEspressoArticle} />
+                  ) : index === 2 && laptopArticle ? (
+                    <HomepageLaunchArticlePlacementCard key={laptopArticle.id} article={laptopArticle} />
                   ) : (
                   <article className="homepage-latest-card" key={item.id}>
                     <div className="homepage-card-image">
@@ -219,6 +222,8 @@ export default async function Home() {
                       <HomepageLaunchArticlePlacementCard key={fridgeFreezerArticle.id} article={fridgeFreezerArticle} />
                     ) : section.name === "Home" && index === 0 && coffeeEspressoArticle ? (
                       <HomepageLaunchArticlePlacementCard key={coffeeEspressoArticle.id} article={coffeeEspressoArticle} />
+                    ) : section.name === "Tech" && index === 0 && laptopArticle ? (
+                      <HomepageLaunchArticlePlacementCard key={laptopArticle.id} article={laptopArticle} />
                     ) : (
                     <article className="homepage-latest-card" key={topic}>
                       <div className="homepage-card-image homepage-category-placeholder-image">

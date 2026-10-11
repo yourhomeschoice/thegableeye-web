@@ -104,7 +104,7 @@ export function CategoryLandingPage({
             </div>
             <div className="travel-landing-guide-grid">
               {section.guides.map((guide, index) =>
-                section.id === "connectivity" && index === 0 && developmentArticle ? (
+                (section.id === "connectivity" || section.id === "laptops") && index === 0 && developmentArticle ? (
                   <LaunchArticlePlacementCard key={developmentArticle.id} article={developmentArticle} />
                 ) : section.id === "coffee" && index === 0 && coffeeArticle ? (
                   <LaunchArticlePlacementCard key={coffeeArticle.id} article={coffeeArticle} />

@@ -52,3 +52,11 @@ export async function getDevelopmentCoffeeEspressoPlacement(): Promise<Developme
   if (!article) return null;
   return { id: key, href: `/development-preview/${key}`, category: article.manifest.preview.category, title: article.manifest.preview.title, summary: "A comparison of four espresso machines with built-in grinders for home coffee." };
 }
+
+export async function getDevelopmentLaptopEbs008Placement(): Promise<DevelopmentArticlePlacement | null> {
+  if (process.env.NODE_ENV !== "development") return null;
+  const key = "laptop-ebs-008-v1";
+  const article = await getLocalApprovedPackage(key);
+  if (!article) return null;
+  return { id: key, href: `/development-preview/${key}`, category: article.manifest.preview.category, title: article.manifest.preview.title, summary: "Our pick: HP i7-1355U (B0H6PZFFW1) at $799.99." };
+}
