@@ -10,6 +10,7 @@
     "test:canonical-body": "tsx scripts/test-canonical-publication-body.ts",
     "test:travel-adapter-html-rendering": "tsx scripts/test-travel-adapter-html-rendering.ts",
     "test:approved-baseline-publication-preparation": "tsx scripts/test-canonical-publication-body.ts",
+    "test:approved-baseline-publication-candidate": "tsx scripts/test-approved-baseline-publication-candidate.ts",
     "test:japan-esim-launch-baseline": "tsx scripts/test-japan-esim-launch-baseline.ts",
     "test:development-article-placement": "tsx scripts/test-development-article-placement.ts",
     "test:launch-baseline-table-presentation": "tsx scripts/test-launch-baseline-table-presentation.ts",
@@ -19,9 +20,11 @@
     "publication:commit": "node --experimental-strip-types scripts/commit-publication.ts",
     "publication:replace": "node --experimental-strip-types scripts/replace-publication.ts",
     "publication:propose": "node --experimental-strip-types scripts/propose-publication.ts",
+    "publication:build-approved-baseline-candidate": "node --experimental-strip-types scripts/build-approved-baseline-publication-candidate.ts",
     "publication:approve": "node --experimental-strip-types scripts/approve-publication.ts",
     "publication:reject": "node --experimental-strip-types scripts/reject-publication.ts",
-    "publication:test-stale": "node --experimental-strip-types scripts/test-stale-publication-proposal.ts"
+    "publication:test-stale": "node --experimental-strip-types scripts/test-stale-publication-proposal.ts",
+    "editorial-review:report": "tsx scripts/report-editorial-reviews.ts"
   },
   "dependencies": {
     "next": "16.3.8",

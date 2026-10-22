@@ -1,6 +1,6 @@
-import type { RecommendationComparisonArticle } from "./types";
+import type { PublishedRecommendationComparisonArticle } from "./types";
 
 export interface PublicationSource {
-  getPublishedArticles(): Promise<readonly RecommendationComparisonArticle[]>;
-  getPublishedArticleByPath(pathname: string): Promise<RecommendationComparisonArticle | undefined>;
+  getPublishedArticles(): Promise<readonly PublishedRecommendationComparisonArticle[]>;
+  getPublishedArticleByPath(pathname: string): Promise<PublishedRecommendationComparisonArticle | undefined>;
 }

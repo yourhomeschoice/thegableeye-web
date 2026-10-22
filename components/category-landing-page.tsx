@@ -1,9 +1,9 @@
 import Image from "next/image";
-import { LaunchArticlePlacementCard } from "@/components/launch-article-placement-card";
+import { CategoryPublicationPlacementCard } from "@/components/publication-placement-card";
 import { AffiliateDisclosure } from "@/components/affiliate-disclosure";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import type { DevelopmentArticlePlacement } from "@/lib/launch-baseline/article-placement";
+import type { ResolvedArticlePlacementCollection } from "@/lib/publication/placements";
 
 export type CategoryGuide = { category: string; title: string; description: string };
 export type CategoryTopic = { id: string; name: string; detail: string };
@@ -25,12 +25,12 @@ export type CategoryLandingConfig = {
 function GuidePlaceholder({ guide }: { guide: CategoryGuide }) {
   return (
     <article className="travel-landing-guide">
-      <div className="travel-landing-guide-image" aria-hidden="true"><span>Editorial image</span></div>
+      <div className="travel-landing-guide-image" aria-hidden="true"><span>EDITORIAL IMAGE</span></div>
       <div className="travel-landing-guide-copy">
         <p className="eyebrow">{guide.category}</p>
-        <h3 className="editorial">{guide.title}</h3>
-        <p>{guide.description}</p>
-        <span className="travel-landing-coming-soon">Article coming soon</span>
+        <h3 className="editorial">Editorial article</h3>
+        <p>A human-approved article will appear here.</p>
+        <span className="travel-landing-coming-soon">Coming soon</span>
       </div>
     </article>
   );
@@ -38,15 +38,15 @@ function GuidePlaceholder({ guide }: { guide: CategoryGuide }) {
 
 export function CategoryLandingPage({
   config,
-  developmentArticle,
-  travelAdapterArticle,
-  coffeeArticle,
+  placements,
 }: {
   config: CategoryLandingConfig;
-  developmentArticle?: DevelopmentArticlePlacement | null;
-  travelAdapterArticle?: DevelopmentArticlePlacement | null;
-  coffeeArticle?: DevelopmentArticlePlacement | null;
+  placements: ResolvedArticlePlacementCollection;
 }) {
+  const placedArticles = [placements.featured, ...placements.highlighted].filter(
+    (article): article is NonNullable<typeof article> => article !== undefined,
+  );
+
   return (
     <>
       <SiteHeader />
@@ -69,7 +69,7 @@ export function CategoryLandingPage({
           </div>
           <div className="travel-landing-topic-grid">
             {config.topics.map((topic) => (
-              <div className="travel-landing-topic" key={topic.id}>
+              <div className="travel-landing-topic" id={topic.id} key={topic.id}>
                 <h3 className="editorial">{topic.name}</h3>
                 <p>{topic.detail}</p>
               </div>
@@ -83,17 +83,9 @@ export function CategoryLandingPage({
             <p>{config.recentDescription}</p>
           </div>
           <div className="travel-landing-guide-grid">
-            {config.recentPicks.map((guide, index) =>
-              index === 0 && developmentArticle ? (
-                <LaunchArticlePlacementCard key={developmentArticle.id} article={developmentArticle} />
-              ) : index === 0 && coffeeArticle ? (
-                <LaunchArticlePlacementCard key={coffeeArticle.id} article={coffeeArticle} />
-              ) : index === 1 && travelAdapterArticle ? (
-                <LaunchArticlePlacementCard key={travelAdapterArticle.id} article={travelAdapterArticle} />
-              ) : (
-                <GuidePlaceholder key={guide.title} guide={guide} />
-              ),
-            )}
+            {placedArticles.length
+              ? placedArticles.map((article) => <CategoryPublicationPlacementCard key={article.articleKey} article={article} />)
+              : config.recentPicks.map((guide) => <GuidePlaceholder key={guide.title} guide={guide} />)}
           </div>
         </section>
         {config.sections.map((section) => (
@@ -103,17 +95,7 @@ export function CategoryLandingPage({
               <p>{section.detail}</p>
             </div>
             <div className="travel-landing-guide-grid">
-              {section.guides.map((guide, index) =>
-                (section.id === "connectivity" || section.id === "laptops") && index === 0 && developmentArticle ? (
-                  <LaunchArticlePlacementCard key={developmentArticle.id} article={developmentArticle} />
-                ) : section.id === "coffee" && index === 0 && coffeeArticle ? (
-                  <LaunchArticlePlacementCard key={coffeeArticle.id} article={coffeeArticle} />
-                ) : (section.id === "accessories" && index === 0 || section.id === "kitchen" && index === 1) && travelAdapterArticle ? (
-                  <LaunchArticlePlacementCard key={travelAdapterArticle.id} article={travelAdapterArticle} />
-                ) : (
-                  <GuidePlaceholder key={guide.title} guide={{ ...guide, category: section.name }} />
-                ),
-              )}
+              {section.guides.map((guide) => <GuidePlaceholder key={guide.title} guide={{ ...guide, category: section.name }} />)}
             </div>
           </section>
         ))}

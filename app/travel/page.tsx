@@ -1,58 +1,29 @@
-import { CategoryLandingPage, type CategoryLandingConfig } from "@/components/category-landing-page";
-import { getDevelopmentArticlePlacement, getDevelopmentTravelAdapterPlacement } from "@/lib/launch-baseline/article-placement";
+import Image from "next/image";
+import Link from "next/link";
+import { AffiliateDisclosure } from "@/components/affiliate-disclosure";
+import { CategoryPublicationPlacementCard } from "@/components/publication-placement-card";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
+import { getResolvedArticlePlacements } from "@/lib/publication/placements";
+import type { PublishedRecommendationComparisonArticle } from "@/lib/publication/types";
 
-// Launch placeholders only: do not reconnect the earlier test-article feed.
-const config: CategoryLandingConfig = {
-  category: "Travel",
-  headline: "Travel, made clearer.",
-  introduction:
-    "Independent research and practical comparisons to help you choose how to stay connected, what to pack and what to take with you.",
-  heroImage: "/images/Travel page pic.jpg",
-  heroAlt: "Coastal town beside turquoise water and mountains",
-  exploreHeadline: "Three ways to travel smarter.",
-  recentHeadline: "Our recent travel picks",
-  recentDescription: "Our latest Travel articles will appear here as they are published.",
-  topics: [
-    { id: "connectivity", name: "Connectivity", detail: "eSIMs, mobile data and staying connected abroad." },
-    { id: "accessories", name: "Travel Accessories", detail: "Useful equipment for smoother journeys." },
-    { id: "luggage", name: "Luggage", detail: "Suitcases, cabin bags and backpacks." },
-  ],
-  recentPicks: [
-    { category: "Connectivity", title: "Choosing an eSIM for your next trip", description: "What to consider when comparing data allowances and validity." },
-    { category: "Travel Accessories", title: "Travel accessories worth considering", description: "A look at charging equipment, adapters and practical essentials." },
-    { category: "Luggage", title: "Finding luggage that suits your journey", description: "How to think about size, features and different bag styles." },
-  ],
-  sections: [
-    {
-      id: "connectivity", name: "Connectivity", detail: "eSIMs, mobile data and staying connected abroad.",
-      guides: [
-        { title: "Choosing an eSIM for your next trip", description: "Data allowances, validity and other practical considerations." },
-        { title: "Understanding eSIM data plans", description: "A guide to plan sizes, trip lengths and everyday usage." },
-        { title: "Staying connected while travelling", description: "Practical questions to consider before departure." },
-      ],
-    },
-    {
-      id: "accessories", name: "Travel Accessories", detail: "Useful equipment for smoother journeys.",
-      guides: [
-        { title: "Travel adapters explained", description: "Choosing adapters for different destinations and devices." },
-        { title: "Power banks for travel", description: "Capacity, portability and charging considerations." },
-        { title: "Everyday travel essentials", description: "Small accessories that may make packing more practical." },
-      ],
-    },
-    {
-      id: "luggage", name: "Luggage", detail: "Suitcases, cabin bags and backpacks.",
-      guides: [
-        { title: "Choosing cabin luggage", description: "Dimensions, storage and handling considerations." },
-        { title: "Comparing suitcase styles", description: "Practical differences between common luggage designs." },
-        { title: "Travel backpacks explained", description: "Capacity, organisation and carrying comfort." },
-      ],
-    },
-  ],
-};
+const showVisualPreviewCards = process.env.NODE_ENV === "development";
+
+const sections = [
+  { id: "connectivity", name: "Connectivity", detail: "eSIMs, mobile data and staying connected abroad.", legacySubcategory: "eSIMs & Connectivity" },
+  { id: "travel-essentials", name: "Travel Essentials", detail: "Useful equipment for smoother journeys.", legacySubcategory: "Travel Accessories" },
+  { id: "luggage-and-bags", name: "Luggage & Bags", detail: "Suitcases, cabin bags and backpacks.", legacySubcategory: "Luggage" },
+] as const;
+
+function TravelVisualPreviewCard({ section }: { section: string }) {
+  return <article className="travel-landing-guide"><div className="travel-landing-guide-image" aria-hidden="true"><span>VISUAL PREVIEW</span></div><div className="travel-landing-guide-copy"><p className="eyebrow">Local visual preview</p><h3 className="editorial">{section} preview</h3><p>Design-review placeholder only. This is not a published article or recommendation.</p></div></article>;
+}
 
 export default async function TravelPage() {
-  const developmentArticle = await getDevelopmentArticlePlacement();
-  const travelAdapterArticle = await getDevelopmentTravelAdapterPlacement();
+  const placements = await getResolvedArticlePlacements();
+  const placedArticles = [placements.categories.Travel.featured, ...placements.categories.Travel.highlighted].filter(
+    (article): article is PublishedRecommendationComparisonArticle => article !== undefined,
+  );
 
-  return <CategoryLandingPage config={config} developmentArticle={developmentArticle} travelAdapterArticle={travelAdapterArticle} />;
+  return <><SiteHeader /><main className="travel-landing site-shell"><section className="travel-landing-hero" aria-labelledby="category-page-title"><div className="travel-landing-hero-copy"><p className="eyebrow">The Gable Eye / Travel</p><h1 id="category-page-title" className="editorial">Travel, made clearer.</h1><p>Independent research and practical comparisons to help you choose how to stay connected, what to pack and what to take with you.</p></div><div className="travel-landing-hero-image"><Image src="/images/Travel page pic.jpg" alt="Coastal town beside turquoise water and mountains" fill priority sizes="(max-width: 760px) 100vw, 60vw" style={{ objectFit: "cover" }} /></div></section><section className="travel-landing-section" aria-labelledby="travel-topics-title"><div className="travel-landing-heading"><p className="eyebrow">Explore Travel</p><h2 id="travel-topics-title" className="editorial">Three ways to travel smarter.</h2></div><div className="travel-landing-topic-grid">{sections.map((section) => <Link className="travel-landing-topic" href={`#${section.id}`} key={section.id}><h3 className="editorial">{section.name}</h3><p>{section.detail}</p></Link>)}</div><AffiliateDisclosure variant="site" /></section>{sections.map((section) => { const sectionArticles = placedArticles.filter((article) => article.subcategory === section.name || article.subcategory === section.legacySubcategory).slice(0, 3); const previewCount = Math.max(0, 3 - sectionArticles.length); return <section className="travel-landing-section" id={section.id} aria-labelledby={`travel-${section.id}-title`} key={section.id}><div className="travel-landing-heading"><h2 id={`travel-${section.id}-title`} className="editorial">{section.name}</h2><p>{section.detail}</p></div><div className="travel-landing-guide-grid">{sectionArticles.map((article) => <CategoryPublicationPlacementCard key={article.articleKey} article={article} />)}{showVisualPreviewCards ? Array.from({ length: previewCount }, (_, index) => <TravelVisualPreviewCard key={`${section.id}-preview-${index}`} section={section.name} />) : null}</div></section>; })}</main><SiteFooter /></>;
 }

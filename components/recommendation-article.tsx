@@ -2,21 +2,40 @@ import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import { ComparedOptions } from "@/components/compared-options";
 import { RecommendationPanel } from "@/components/recommendation-panel";
-import type { RecommendationComparisonArticle } from "@/lib/publication/types";
-import { subcategoryHref } from "@/lib/publication/indexing";
+import { PublicationCard } from "@/components/publication-card";
+import {
+  HouseAlternativeAssessments,
+  HouseArticleHero,
+  HouseComparisonTable,
+  HouseEditorialIndependence,
+  HouseGuideAndDisclosure,
+  HouseVerdict,
+} from "@/components/house-article-presentation";
+import type {
+  PublishedRecommendationComparisonArticle,
+  RecommendationComparisonArticle,
+} from "@/lib/publication/types";
+import { categoryHref, subcategoryHref } from "@/lib/publication/indexing";
 import { sanitiseTrustedEditorialHtml } from "@/lib/publication/editorial-html";
 
-type RecommendationArticleProps = { article: RecommendationComparisonArticle };
+type RecommendationArticleProps = {
+  article: RecommendationComparisonArticle;
+  relatedArticles?: readonly PublishedRecommendationComparisonArticle[];
+};
 
-export function RecommendationArticle({ article }: RecommendationArticleProps) {
+export function RecommendationArticle({ article, relatedArticles = [] }: RecommendationArticleProps) {
   if (article.articleBody) {
     const body = article.articleBody;
+    if (body.format === "HOUSE") {
+      return <HouseArticle article={article} relatedArticles={relatedArticles} />;
+    }
     return (
       <main className="article-page"><article className="article-shell">
         <ArticleChrome article={article} showTitle={body.format !== "HTML"} />
         <div className="article-reading article-markdown">
           {body.format === "MARKDOWN" ? <ReactMarkdown>{body.content}</ReactMarkdown> : <div className="article-html" dangerouslySetInnerHTML={{ __html: sanitiseTrustedEditorialHtml(body.content) }} />}
         </div>
+        <RelatedReading articles={relatedArticles} />
       </article></main>
     );
   }
@@ -43,14 +62,73 @@ export function RecommendationArticle({ article }: RecommendationArticleProps) {
         <section className="article-update" aria-labelledby="updates-heading"><h2 id="updates-heading" className="editorial">{sections.updates.heading}</h2><p>{sections.updates.bodyBeforeLink}<Link href="/corrections/">{sections.updates.linkText}</Link>{sections.updates.bodyAfterLink}</p></section>
       </div>
       <footer className="author-card"><p className="eyebrow">{sections.authorCard.heading}</p><h2 className="editorial">{article.author}</h2><p>{sections.authorCard.description}</p></footer>
+      <RelatedReading articles={relatedArticles} />
     </article></main>
   );
 }
 
-function ArticleChrome({ article, showTitle = true }: RecommendationArticleProps & { showTitle?: boolean }) {
+function HouseArticle({ article, relatedArticles = [] }: RecommendationArticleProps) {
+  const body = article.articleBody;
+  if (!body || body.format !== "HOUSE") return null;
+  const { guide, sections } = body.presentation;
+  const hasMethodology = sections.some(
+    (section) => section.kind === "TEXT" && section.role === "METHODOLOGY",
+  );
+
+  return (
+    <main className="article-page"><article className="article-shell">
+      <ArticleChrome article={article} suppressAffiliateDisclosure />
+      {article.image && <HouseArticleHero src={article.image.src} alt={article.image.alt} caption={article.image.caption} width={article.image.width} height={article.image.height} />}
+      <div className="article-reading house-article-reading">
+        <HouseGuideAndDisclosure items={guide.map((item) => ({ href: `#${item.targetId}`, label: item.label }))}>
+          The Gable Eye may earn a commission if you buy through certain links in our articles, at no additional cost to you. This does not influence our editorial recommendations.
+        </HouseGuideAndDisclosure>
+        {sections.map((section) => <HouseSection key={section.id} section={section} />)}
+        {!hasMethodology && <HouseEditorialIndependence />}
+      </div>
+      <RelatedReading articles={relatedArticles} />
+    </article></main>
+  );
+}
+
+function HouseSection({ section }: { section: Extract<NonNullable<RecommendationComparisonArticle["articleBody"]>, { format: "HOUSE" }>["presentation"]["sections"][number] }) {
+  if (section.kind === "TEXT") {
+    return <><section id={section.id}><h2 className="editorial">{section.heading}</h2>{section.paragraphs?.map((paragraph, index) => <p key={index}>{paragraph}</p>)}{section.subsections?.map((subsection) => <div key={subsection.heading}><h3 className="editorial">{subsection.heading}</h3>{subsection.paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div>)}</section>{section.role === "METHODOLOGY" && <HouseEditorialIndependence />}</>;
+  }
+  if (section.kind === "VERDICT") {
+    return <HouseVerdict id={section.id}>{section.paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}</HouseVerdict>;
+  }
+  if (section.kind === "COMPARISON") {
+    return <HouseComparisonTable id={section.id} heading={section.heading} introduction={section.introduction?.map((paragraph, index) => <p key={index}>{paragraph}</p>)} columns={section.columns.map((column) => ({ label: column.label }))} rows={section.rows} stickyFirstColumn={section.stickyFirstColumn} />;
+  }
+  return <HouseAlternativeAssessments id={section.id} heading={section.heading} alternatives={section.items.map((item) => ({ heading: item.heading, body: item.paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>) }))} />;
+}
+
+function RelatedReading({
+  articles,
+}: {
+  articles: readonly PublishedRecommendationComparisonArticle[];
+}) {
+  if (!articles.length) return null;
+
+  return (
+    <section className="related-reading" aria-labelledby="related-reading-title">
+      <p className="eyebrow">Continue reading</p>
+      <h2 id="related-reading-title" className="editorial">Related reading</h2>
+      <div className="article-grid related-reading-grid">
+        {articles.map((article) => <PublicationCard key={article.articleKey} article={article} />)}
+      </div>
+    </section>
+  );
+}
+
+function ArticleChrome({ article, showTitle = true, suppressAffiliateDisclosure = false }: RecommendationArticleProps & { showTitle?: boolean; suppressAffiliateDisclosure?: boolean }) {
+  const categoryLink = categoryHref(article.category);
+  const subcategoryLink = subcategoryHref(article.category, article.subcategory);
+
   return <>
-    <nav className="breadcrumb" aria-label="Breadcrumb"><Link href="/travel/">{article.category}</Link><span aria-hidden="true">/</span>{subcategoryHref(article.subcategory) ? <Link href={subcategoryHref(article.subcategory)!}>{article.subcategory}</Link> : <span>{article.subcategory}</span>}</nav>
+    <nav className="breadcrumb" aria-label="Breadcrumb">{categoryLink ? <Link href={categoryLink}>{article.category}</Link> : <span>{article.category}</span>}<span aria-hidden="true">/</span>{subcategoryLink ? <Link href={subcategoryLink}>{article.subcategory}</Link> : <span>{article.subcategory}</span>}</nav>
     <header className="article-header"><p className="eyebrow">{article.articleType}</p>{showTitle && <h1 className="editorial">{article.title}</h1>}<p className="article-standfirst">{article.standfirst}</p><div className="article-meta"><span>By {article.author}</span><span>Last researched: {article.lastResearched}</span></div></header>
-    {article.affiliateDisclosure && <p className="affiliate-disclosure"><strong>Affiliate disclosure:</strong> {article.affiliateDisclosure}</p>}
+    {!suppressAffiliateDisclosure && article.affiliateDisclosure && <p className="affiliate-disclosure"><strong>Affiliate disclosure:</strong> {article.affiliateDisclosure}</p>}
   </>;
 }

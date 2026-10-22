@@ -3,37 +3,39 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import Image from "next/image";
 import { AffiliateDisclosure } from "@/components/affiliate-disclosure";
-import { HomepageLaunchArticlePlacementCard } from "@/components/launch-article-placement-card";
-import { getDevelopmentArticlePlacement, getDevelopmentTravelAdapterPlacement, getDevelopmentFridgeFreezerPlacement, getDevelopmentCoffeeEspressoPlacement, getDevelopmentLaptopEbs008Placement } from "@/lib/launch-baseline/article-placement";
+import { HomepagePublicationPlacementCard } from "@/components/publication-placement-card";
+import { getResolvedArticlePlacements } from "@/lib/publication/placements";
+import type { PublicationCategory } from "@/lib/publication/indexing";
+import type { PublishedRecommendationComparisonArticle } from "@/lib/publication/types";
 
 const categories = [
   {
+    name: "Home",
+    icon: "⌂",
+    description: "Kitchen, appliances and coffee",
+    href: "/home/",
+    available: true,
+  },
+  {
     name: "Travel",
     icon: "✈",
-    description: "eSIMs, transport, car hire and more",
+    description: "Connectivity, travel essentials and luggage",
     href: "/travel/",
     available: true,
   },
   {
-    name: "Tech",
-    icon: "⌘",
-    description: "Devices, software and everyday technology",
-    href: "/tech/",
-    available: false,
-  },
-  {
-    name: "Home",
-    icon: "⌂",
-    description: "Appliances, kitchen and home essentials",
-    href: "/home/",
-    available: false,
+    name: "Outdoor",
+    icon: "♧",
+    description: "Camping, hiking and outdoor gear",
+    href: "/outdoor/",
+    available: true,
   },
   {
     name: "Lifestyle",
-    icon: "♧",
-    description: "Outdoor, family and everyday life",
+    icon: "⌘",
+    description: "Personal care, fitness and everyday essentials",
     href: "/lifestyle/",
-    available: false,
+    available: true,
   },
 ];
 
@@ -41,62 +43,85 @@ const latestPlaceholders = [
   {
     id: 1,
     category: "TRAVEL · eSIMs",
-    title: "Choosing an eSIM for international travel",
-    description: "Explore connectivity options and the practical details worth comparing.",
-    image: "/images/esim.webp",
-    alt: "Digital SIM card illustration with electronic circuitry",
+    title: "Editorial article",
+    description: "A human-approved article will appear here.",
   },
   {
     id: 2,
     category: "HOME · COFFEE",
-    title: "Finding the right home espresso machine",
-    description: "A closer look at the features and everyday considerations of home espresso.",
-    image: "/images/espresso.webp",
-    alt: "Cup of coffee with latte art on an espresso machine",
+    title: "Editorial article",
+    description: "A human-approved article will appear here.",
   },
   {
     id: 3,
     category: "TECH · LAPTOPS",
-    title: "Choosing a laptop for everyday use",
-    description: "Exploring practical features and considerations for everyday computing.",
-    image: "/images/laptop.webp",
-    alt: "Laptop on a bright minimalist desk",
+    title: "Editorial article",
+    description: "A human-approved article will appear here.",
   },
 ];
 
+const showVisualFallbackCards = process.env.NODE_ENV === "development";
+
+const latestVisualFallbackCards = [
+  { id: "connectivity", title: "Connectivity preview", image: "/images/esim.webp", alt: "Abstract connectivity illustration" },
+  { id: "home", title: "Home preview", image: "/images/espresso.webp", alt: "Coffee and espresso equipment" },
+  { id: "everyday", title: "Everyday choices preview", image: "/images/laptop.webp", alt: "Everyday workspace" },
+] as const;
+
+function HomepageVisualFallbackCard({
+  title,
+  image,
+  alt,
+}: {
+  title: string;
+  image?: string;
+  alt?: string;
+}) {
+  return (
+    <article className="homepage-latest-card">
+      <div className="homepage-card-image homepage-category-placeholder-image">
+        {image ? <Image src={image} alt={alt ?? ""} fill sizes="(max-width: 760px) 100vw, (max-width: 1050px) 50vw, 25vw" style={{ objectFit: "cover" }} /> : <span>VISUAL PREVIEW</span>}
+      </div>
+      <div className="homepage-card-content">
+        <p className="eyebrow">Local visual preview</p>
+        <h3 className="editorial">{title}</h3>
+        <p>Design-review placeholder only. This is not a published article or recommendation.</p>
+      </div>
+    </article>
+  );
+}
+
 const homepageSections = [
-  {
-    name: "Travel",
-    description:
-      "Your travel comparisons in one place. Practical advice on staying connected, travel accessories and making the most of your journey.",
-    topics: ["eSIMs", "Travel accessories", "Luggage"],
-  },
-  {
-    name: "Tech",
-    description:
-      "Technology explained without the jargon. Clear comparisons to help you choose devices and digital tools that suit your needs.",
-    topics: ["Laptops", "Smartphones", "Accessories"],
-  },
   {
     name: "Home",
     description:
       "Make more informed choices for everyday living. From kitchen equipment to home essentials, we focus on what matters in practice.",
-    topics: ["Coffee machines", "Kitchen appliances", "Home essentials"],
+    topics: ["Kitchen", "Appliances", "All About Coffee"],
+  },
+  {
+    name: "Travel",
+    description:
+      "Your travel comparisons in one place. Practical advice on staying connected, travel accessories and making the most of your journey.",
+    topics: ["Connectivity", "Travel Essentials", "Luggage & Bags"],
+  },
+  {
+    name: "Outdoor",
+    description:
+      "Practical guidance for time outside, from camping equipment to hiking and walking essentials.",
+    topics: ["Camping", "Hiking & Walking", "Outdoor Gear"],
   },
   {
     name: "Lifestyle",
     description:
-      "Useful comparisons for life beyond the essentials. Thoughtful guidance on outdoor gear, family products and everyday purchases.",
-    topics: ["Outdoor", "Family", "Everyday living"],
+      "Useful comparisons for personal care, fitness and everyday essentials.",
+    topics: ["Personal Care", "Fitness & Wellbeing", "Everyday Essentials"],
   },
 ];
 
 export default async function Home() {
-  const developmentArticle = await getDevelopmentArticlePlacement();
-  const travelAdapterArticle = await getDevelopmentTravelAdapterPlacement();
-  const fridgeFreezerArticle = await getDevelopmentFridgeFreezerPlacement();
-  const coffeeEspressoArticle = await getDevelopmentCoffeeEspressoPlacement();
-  const laptopArticle = await getDevelopmentLaptopEbs008Placement();
+  const placements = await getResolvedArticlePlacements();
+  const homepagePlacements = placements.homepage;
+  void latestPlaceholders;
 
   return (
     <>
@@ -108,16 +133,26 @@ export default async function Home() {
             <section className="homepage-feature" aria-labelledby="homepage-feature-title">
               <div className="homepage-feature-content">
                 <p className="eyebrow">Featured guide</p>
-                <h1 id="homepage-feature-title" className="editorial">
-                  Independent advice for better decisions.
-                </h1>
-                <p>
-                  Clear comparisons, practical research and recommendations
-                  supported by evidence.
-                </p>
-                <span className="homepage-coming-soon">
-                  Featured article coming soon
-                </span>
+                {homepagePlacements.featured ? (
+                  <>
+                    <h1 id="homepage-feature-title" className="editorial">{homepagePlacements.featured.title}</h1>
+                    <p>{homepagePlacements.featured.standfirst}</p>
+                    <Link className="text-link" href={homepagePlacements.featured.path}>Read article <span aria-hidden="true">→</span></Link>
+                  </>
+                ) : (
+                  <>
+                    <h1 id="homepage-feature-title" className="editorial">
+                      Independent advice for better decisions.
+                    </h1>
+                    <p>
+                      Clear comparisons, practical research and recommendations
+                      supported by evidence.
+                    </p>
+                    <span className="homepage-coming-soon">
+                      Featured article coming soon
+                    </span>
+                  </>
+                )}
               </div>
               <div className="homepage-feature-visual">
   <Image
@@ -167,32 +202,10 @@ export default async function Home() {
               </div>
 
               <div className="homepage-latest-grid">
-                {latestPlaceholders.map((item, index) =>
-                  index === 0 && developmentArticle ? (
-                    <HomepageLaunchArticlePlacementCard key={developmentArticle.id} article={developmentArticle} />
-                  ) : index === 1 && coffeeEspressoArticle ? (
-                    <HomepageLaunchArticlePlacementCard key={coffeeEspressoArticle.id} article={coffeeEspressoArticle} />
-                  ) : index === 2 && laptopArticle ? (
-                    <HomepageLaunchArticlePlacementCard key={laptopArticle.id} article={laptopArticle} />
-                  ) : (
-                  <article className="homepage-latest-card" key={item.id}>
-                    <div className="homepage-card-image">
-  <Image
-    src={item.image}
-    alt={item.alt}
-    fill
-    sizes="(max-width: 760px) 100vw, (max-width: 1050px) 50vw, 25vw"
-    style={{ objectFit: "cover" }}
-  />
-</div>
-                    <div className="homepage-card-content">
-                      <p className="eyebrow">{item.category}</p>
-                      <h3 className="editorial">{item.title}</h3>
-                      <p>{item.description}</p>
-                    </div>
-                  </article>
-                  ),
-                )}
+                {homepagePlacements.highlighted.slice(0, 3).map((article) => <HomepagePublicationPlacementCard key={article.articleKey} article={article} />)}
+                {showVisualFallbackCards
+                  ? latestVisualFallbackCards.slice(homepagePlacements.highlighted.length, 3).map((card) => <HomepageVisualFallbackCard key={card.id} {...card} />)
+                  : null}
               </div>
             </section>
 
@@ -213,18 +226,16 @@ export default async function Home() {
                 </div>
 
                 <div className="homepage-latest-grid">
-                  {section.topics.map((topic, index) =>
-                    section.name === "Travel" && index === 0 && developmentArticle ? (
-                      <HomepageLaunchArticlePlacementCard key={developmentArticle.id} article={developmentArticle} />
-                    ) : section.name === "Travel" && index === 1 && travelAdapterArticle ? (
-                      <HomepageLaunchArticlePlacementCard key={travelAdapterArticle.id} article={travelAdapterArticle} />
-                    ) : section.name === "Home" && index === 1 && fridgeFreezerArticle ? (
-                      <HomepageLaunchArticlePlacementCard key={fridgeFreezerArticle.id} article={fridgeFreezerArticle} />
-                    ) : section.name === "Home" && index === 0 && coffeeEspressoArticle ? (
-                      <HomepageLaunchArticlePlacementCard key={coffeeEspressoArticle.id} article={coffeeEspressoArticle} />
-                    ) : section.name === "Tech" && index === 0 && laptopArticle ? (
-                      <HomepageLaunchArticlePlacementCard key={laptopArticle.id} article={laptopArticle} />
-                    ) : (
+                  {(() => {
+                    const articles = section.name === "Outdoor"
+                      ? []
+                      : [
+                          placements.categories[section.name as PublicationCategory].featured,
+                          ...placements.categories[section.name as PublicationCategory].highlighted,
+                        ].filter((article): article is PublishedRecommendationComparisonArticle => article !== undefined);
+                    return articles.length
+                      ? articles.map((article) => <HomepagePublicationPlacementCard key={article.articleKey} article={article} />)
+                      : (showVisualFallbackCards ? section.topics : []).map((topic) => (
                     <article className="homepage-latest-card" key={topic}>
                       <div className="homepage-card-image homepage-category-placeholder-image">
                         <span>EDITORIAL IMAGE</span>
@@ -233,12 +244,12 @@ export default async function Home() {
                         <p className="eyebrow">
                           {section.name.toUpperCase()} · {topic.toUpperCase()}
                         </p>
-                        <h3 className="editorial">{topic}</h3>
-                        <p>Article coming soon.</p>
+                        <h3 className="editorial">{topic} preview</h3>
+                        <p>Local visual preview only. This is not a published article or recommendation.</p>
                       </div>
                     </article>
-                    ),
-                  )}
+                      ));
+                  })()}
                 </div>
               </section>
             ))}
@@ -250,8 +261,8 @@ export default async function Home() {
               <div className="homepage-sidebar-image">
                 <span>EDITORIAL IMAGE</span>
               </div>
-              <h2 className="editorial">Featured guide placeholder</h2>
-              <p>Our next featured comparison will appear here.</p>
+              <h2 className="editorial">Editorial guide</h2>
+              <p>A human-approved guide will appear here.</p>
             </section>
 
             <section className="homepage-popular">
@@ -262,7 +273,7 @@ export default async function Home() {
               {[1, 2, 3, 4].map((number) => (
                 <div className="homepage-popular-item" key={number}>
                   <div className="homepage-popular-image" aria-hidden="true" />
-                  <span>Guide placeholder {number}</span>
+                  <span>Editorial guide</span>
                 </div>
               ))}
             </section>

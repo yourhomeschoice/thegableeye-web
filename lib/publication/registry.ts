@@ -1,7 +1,7 @@
 import { publicationSource } from "./publication-source";
-import type { RecommendationComparisonArticle } from "./types";
+import type { PublishedRecommendationComparisonArticle } from "./types";
 
-export async function getPublicationByPath(pathname: string): Promise<RecommendationComparisonArticle | undefined> {
+export async function getPublicationByPath(pathname: string): Promise<PublishedRecommendationComparisonArticle | undefined> {
   return publicationSource.getPublishedArticleByPath(pathname);
 }
 

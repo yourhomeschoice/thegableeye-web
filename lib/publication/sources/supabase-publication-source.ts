@@ -1,12 +1,12 @@
 import type { PublicationSource } from "../source";
-import type { RecommendationComparisonArticle } from "../types";
+import type { PublishedRecommendationComparisonArticle } from "../types";
 import { requireValidPublicationArticle } from "../validation";
 import {
   hasPubliclyReleasedArticles,
   isPubliclyReleasedArticlePath,
 } from "../public-release";
 
-type PublicationRow = { path: unknown; payload: unknown };
+type PublicationRow = { article_key: unknown; path: unknown; payload: unknown };
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -30,7 +30,7 @@ export class SupabasePublicationSource implements PublicationSource {
     this.publishableKey = publishableKey;
   }
 
-  async getPublishedArticles(): Promise<readonly RecommendationComparisonArticle[]> {
+  async getPublishedArticles(): Promise<readonly PublishedRecommendationComparisonArticle[]> {
     // With no website-approved paths, do not expose or fetch test publications.
     // The source remains read-only; Supabase records are unchanged.
     if (!hasPubliclyReleasedArticles()) {
@@ -43,7 +43,7 @@ export class SupabasePublicationSource implements PublicationSource {
 
   async getPublishedArticleByPath(
     pathname: string,
-  ): Promise<RecommendationComparisonArticle | undefined> {
+  ): Promise<PublishedRecommendationComparisonArticle | undefined> {
     // This check is essential: excluding static params alone does not prevent
     // direct URL access to an unapproved publication.
     if (!isPubliclyReleasedArticlePath(pathname)) {
@@ -60,8 +60,8 @@ export class SupabasePublicationSource implements PublicationSource {
 
   private async getRows(
     filters: Record<string, string>,
-  ): Promise<readonly RecommendationComparisonArticle[]> {
-    const query = new URLSearchParams({ select: "path,payload", ...filters });
+  ): Promise<readonly PublishedRecommendationComparisonArticle[]> {
+    const query = new URLSearchParams({ select: "article_key,path,payload", ...filters });
     const response = await fetch(
       this.url + "/rest/v1/publications?" + query.toString(),
       {
@@ -90,7 +90,7 @@ export class SupabasePublicationSource implements PublicationSource {
     return rows.map((row, index) => this.validateRow(row, index));
   }
 
-  private validateRow(row: unknown, index: number): RecommendationComparisonArticle {
+  private validateRow(row: unknown, index: number): PublishedRecommendationComparisonArticle {
     if (!isObject(row)) {
       throw new Error(
         "Supabase publication source returned an invalid row at index " + index + ".",
@@ -98,7 +98,11 @@ export class SupabasePublicationSource implements PublicationSource {
     }
 
     const publicationRow = row as PublicationRow;
-    if (typeof publicationRow.path !== "string") {
+    if (
+      typeof publicationRow.article_key !== "string" ||
+      publicationRow.article_key.trim().length === 0 ||
+      typeof publicationRow.path !== "string"
+    ) {
       throw new Error(
         "Supabase publication source returned a malformed publication at index " +
           index +
@@ -113,7 +117,7 @@ export class SupabasePublicationSource implements PublicationSource {
       );
     }
 
-    return article;
+    return { ...article, articleKey: publicationRow.article_key };
   }
 }
 

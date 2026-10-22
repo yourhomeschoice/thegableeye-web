@@ -7,6 +7,7 @@ import {
   getPublicationByPath,
   getPublicationRouteParams,
 } from "@/lib/publication/registry";
+import { getResolvedRelatedArticles } from "@/lib/publication/related-articles";
 
 type ArticleRouteProps = {
   params: Promise<{ category: string; slug: string[] }>;
@@ -76,10 +77,12 @@ export default async function PublicationArticlePage({
     notFound();
   }
 
+  const relatedArticles = await getResolvedRelatedArticles(article.articleKey);
+
   return (
     <>
       <SiteHeader />
-      <RecommendationArticle article={article} />
+      <RecommendationArticle article={article} relatedArticles={relatedArticles} />
       <SiteFooter />
     </>
   );

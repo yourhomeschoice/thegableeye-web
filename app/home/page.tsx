@@ -1,47 +1,29 @@
-import { CategoryLandingPage, type CategoryLandingConfig } from "@/components/category-landing-page";
-import { getDevelopmentCoffeeEspressoPlacement, getDevelopmentFridgeFreezerPlacement } from "@/lib/launch-baseline/article-placement";
+import Image from "next/image";
+import Link from "next/link";
+import { AffiliateDisclosure } from "@/components/affiliate-disclosure";
+import { CategoryPublicationPlacementCard } from "@/components/publication-placement-card";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
+import { getResolvedArticlePlacements } from "@/lib/publication/placements";
+import type { PublishedRecommendationComparisonArticle } from "@/lib/publication/types";
 
-// Launch placeholders only: no Supabase or test-article publication feed.
-const config: CategoryLandingConfig = {
-  category: "Home",
-  headline: "Home choices, made clearer.",
-  introduction: "Independent research and practical comparisons to help you choose equipment and essentials for everyday living.",
-  heroImage: "/images/home page pic.jpg",
-  heroAlt: "Cup of coffee beside an espresso machine",
-  exploreHeadline: "Explore the essentials for home.",
-  recentHeadline: "Our recent home picks",
-  recentDescription: "Our latest Home articles will appear here as they are published.",
-  topics: [
-    { id: "coffee", name: "Coffee Machines", detail: "Coffee-making equipment for different routines." },
-    { id: "kitchen", name: "Kitchen Appliances", detail: "Practical appliances for everyday cooking." },
-    { id: "essentials", name: "Home Essentials", detail: "Useful equipment for living spaces and daily tasks." }
-  ],
-  recentPicks: [
-    { category: "Coffee Machines", title: "Choosing a home espresso machine", description: "Considerations for space, budget and daily use." },
-    { category: "Kitchen Appliances", title: "Choosing a countertop appliance", description: "Size, functions and everyday usability." },
-    { category: "Home Essentials", title: "Choosing everyday home essentials", description: "What to prioritise for practical use." }
-  ],
-  sections: [
-    { id: "coffee", name: "Coffee Machines", detail: "Find the equipment that suits your coffee routine.", guides: [
-      { title: "Choosing a home espresso machine", description: "Considerations for space, budget and daily use." },
-      { title: "Coffee machine types explained", description: "How common brewing methods differ." },
-      { title: "Coffee equipment essentials", description: "Accessories and upkeep to consider." }
-    ] },
-    { id: "kitchen", name: "Kitchen Appliances", detail: "Understanding practical features before buying.", guides: [
-      { title: "Choosing a countertop appliance", description: "Size, functions and everyday usability." },
-      { title: "Kitchen appliance features explained", description: "Which specifications deserve attention." },
-      { title: "Planning a practical kitchen setup", description: "Matching equipment to available space." }
-    ] },
-    { id: "essentials", name: "Home Essentials", detail: "Useful comparisons for daily living.", guides: [
-      { title: "Choosing everyday home essentials", description: "What to prioritise for practical use." },
-      { title: "Home storage considerations", description: "Comparing capacity, size and flexibility." },
-      { title: "Understanding home product features", description: "How to assess materials and maintenance." }
-    ] }
-  ],
-};
+const showVisualPreviewCards = process.env.NODE_ENV === "development";
+
+const sections = [
+  { id: "kitchen", name: "Kitchen", detail: "Practical equipment for everyday cooking.", legacySubcategory: "Kitchen Appliances" },
+  { id: "appliances", name: "Appliances", detail: "Useful appliances for daily routines.", legacySubcategory: "Home Essentials" },
+  { id: "all-about-coffee", name: "All About Coffee", detail: "Coffee-making equipment for different routines.", legacySubcategory: "Coffee Machines" },
+] as const;
+
+function HomeVisualPreviewCard({ section }: { section: string }) {
+  return <article className="travel-landing-guide"><div className="travel-landing-guide-image" aria-hidden="true"><span>VISUAL PREVIEW</span></div><div className="travel-landing-guide-copy"><p className="eyebrow">Local visual preview</p><h3 className="editorial">{section} preview</h3><p>Design-review placeholder only. This is not a published article or recommendation.</p></div></article>;
+}
 
 export default async function Page() {
-  const fridgeFreezerArticle = await getDevelopmentFridgeFreezerPlacement();
-  const coffeeEspressoArticle = await getDevelopmentCoffeeEspressoPlacement();
-  return <CategoryLandingPage config={config} travelAdapterArticle={fridgeFreezerArticle} coffeeArticle={coffeeEspressoArticle} />;
+  const placements = await getResolvedArticlePlacements();
+  const placedArticles = [placements.categories.Home.featured, ...placements.categories.Home.highlighted].filter(
+    (article): article is PublishedRecommendationComparisonArticle => article !== undefined,
+  );
+
+  return <><SiteHeader /><main className="travel-landing site-shell"><section className="travel-landing-hero" aria-labelledby="category-page-title"><div className="travel-landing-hero-copy"><p className="eyebrow">The Gable Eye / Home</p><h1 id="category-page-title" className="editorial">Home choices, made clearer.</h1><p>Independent research and practical comparisons to help you choose equipment and essentials for everyday living.</p></div><div className="travel-landing-hero-image"><Image src="/images/home page pic.jpg" alt="Cup of coffee beside an espresso machine" fill priority sizes="(max-width: 760px) 100vw, 60vw" style={{ objectFit: "cover" }} /></div></section><section className="travel-landing-section" aria-labelledby="home-topics-title"><div className="travel-landing-heading"><p className="eyebrow">Explore Home</p><h2 id="home-topics-title" className="editorial">Explore the essentials for home.</h2></div><div className="travel-landing-topic-grid">{sections.map((section) => <Link className="travel-landing-topic" href={`#${section.id}`} key={section.id}><h3 className="editorial">{section.name}</h3><p>{section.detail}</p></Link>)}</div><AffiliateDisclosure variant="site" /></section>{sections.map((section) => { const sectionArticles = placedArticles.filter((article) => article.subcategory === section.name || article.subcategory === section.legacySubcategory).slice(0, 3); const previewCount = Math.max(0, 3 - sectionArticles.length); return <section className="travel-landing-section" id={section.id} aria-labelledby={`home-${section.id}-title`} key={section.id}><div className="travel-landing-heading"><h2 id={`home-${section.id}-title`} className="editorial">{section.name}</h2><p>{section.detail}</p></div><div className="travel-landing-guide-grid">{sectionArticles.map((article) => <CategoryPublicationPlacementCard key={article.articleKey} article={article} />)}{showVisualPreviewCards ? Array.from({ length: previewCount }, (_, index) => <HomeVisualPreviewCard key={`${section.id}-preview-${index}`} section={section.name} />) : null}</div></section>; })}</main><SiteFooter /></>;
 }
