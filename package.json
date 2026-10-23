@@ -26,7 +26,8 @@
     "publication:reject": "node --experimental-strip-types scripts/reject-publication.ts",
     "publication:test-stale": "node --experimental-strip-types scripts/test-stale-publication-proposal.ts",
     "editorial-review:report": "tsx scripts/report-editorial-reviews.ts",
-    "test:house-publication-candidates": "tsx scripts/test-house-publication-candidates.ts"
+    "test:house-publication-candidates": "tsx scripts/test-house-publication-candidates.ts",
+    "test:house-pre-release-simulation": "tsx scripts/test-house-pre-release-simulation.ts"
   },
   "dependencies": {
     "next": "16.3.8",
