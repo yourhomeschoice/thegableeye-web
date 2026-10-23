@@ -55,6 +55,31 @@ assert.deepEqual(await source.getPublishedArticles(), [], "an empty public-relea
 assert.equal(fetchCalls, 0, "unreleased articles cannot enter public indexes");
 globalThis.fetch = originalFetch;
 
+Reflect.set(process.env, "NODE_ENV", "development");
+globalThis.fetch = async (input) => {
+  const url = new URL(String(input));
+  assert.equal(url.searchParams.get("article_key"), "eq.permanent-identity-fixture");
+  assert.equal(url.searchParams.get("version"), "eq.1");
+  assert.equal(url.searchParams.get("publication_status"), "eq.PUBLISHED");
+  return new Response(JSON.stringify([{ article_key: "permanent-identity-fixture", path: payload.path, payload }]));
+};
+const locallyInspected = await source.getPublishedArticleForLocalInspection(
+  "permanent-identity-fixture",
+  payload.path,
+  1,
+);
+assert.equal(locallyInspected.articleKey, "permanent-identity-fixture");
+globalThis.fetch = originalFetch;
+Reflect.set(process.env, "NODE_ENV", "production");
+await assert.rejects(
+  source.getPublishedArticleForLocalInspection(
+    "permanent-identity-fixture",
+    payload.path,
+    1,
+  ),
+  /development/,
+);
+
 const categories = ["Travel", "Tech", "Home", "Outdoor", "Lifestyle"] as const;
 const releasedArticles: readonly PublishedRecommendationComparisonArticle[] = categories.map((category) => ({
   ...payload,

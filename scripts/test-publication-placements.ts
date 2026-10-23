@@ -65,9 +65,10 @@ assert.deepEqual(resolved.categories.Home.highlighted, [], "missing and unreleas
 assert.deepEqual(resolved.categories.Outdoor.highlighted, []);
 assert.deepEqual(resolved.categories.Lifestyle.highlighted, []);
 
-assert.deepEqual(articlePlacementConfiguration.homepage.highlightedArticleKeys, [], "live homepage configuration starts empty");
-for (const category of ["Travel", "Tech", "Home", "Outdoor", "Lifestyle"] as const) {
-  assert.deepEqual(articlePlacementConfiguration.categories[category].highlightedArticleKeys, [], `${category} live category configuration starts empty`);
+assert.deepEqual(articlePlacementConfiguration.homepage.highlightedArticleKeys, [], "homepage does not feature pending articles");
+assert.deepEqual(articlePlacementConfiguration.categories.Home.highlightedArticleKeys, ["slow-cookers-compared", "clothes-dryers-compared"], "Home uses permanent A001/A002 article keys");
+for (const category of ["Travel", "Tech", "Outdoor", "Lifestyle"] as const) {
+  assert.deepEqual(articlePlacementConfiguration.categories[category].highlightedArticleKeys, [], `${category} live category configuration remains empty`);
 }
 
 const files = await Promise.all([

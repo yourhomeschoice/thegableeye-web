@@ -19,12 +19,14 @@
     "test:travel-adapter-ebs-005": "tsx scripts/test-travel-adapter-ebs-005.ts",
     "publication:commit": "node --experimental-strip-types scripts/commit-publication.ts",
     "publication:replace": "node --experimental-strip-types scripts/replace-publication.ts",
-    "publication:propose": "node --experimental-strip-types scripts/propose-publication.ts",
+    "publication:propose": "tsx scripts/propose-publication.ts",
     "publication:build-approved-baseline-candidate": "node --experimental-strip-types scripts/build-approved-baseline-publication-candidate.ts",
-    "publication:approve": "node --experimental-strip-types scripts/approve-publication.ts",
+    "publication:build-house-candidates": "tsx scripts/build-house-publication-candidates.ts",
+    "publication:approve": "tsx scripts/approve-publication.ts" ,
     "publication:reject": "node --experimental-strip-types scripts/reject-publication.ts",
     "publication:test-stale": "node --experimental-strip-types scripts/test-stale-publication-proposal.ts",
-    "editorial-review:report": "tsx scripts/report-editorial-reviews.ts"
+    "editorial-review:report": "tsx scripts/report-editorial-reviews.ts",
+    "test:house-publication-candidates": "tsx scripts/test-house-publication-candidates.ts"
   },
   "dependencies": {
     "next": "16.3.8",

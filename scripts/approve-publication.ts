@@ -1,7 +1,5 @@
-import nextEnv from "@next/env";
+import { loadEnvConfig } from "@next/env";
 import { requireValidPublicationArticle } from "../lib/publication/validation.ts";
-
-const { loadEnvConfig } = nextEnv;
 
 type ProposalRow = {
   id: unknown;

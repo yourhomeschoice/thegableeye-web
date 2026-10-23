@@ -16,8 +16,9 @@ export type ArticlePlacementConfiguration = Readonly<{
 }>;
 
 /**
- * Deliberately empty until individual article releases and placements receive
- * human approval. Entries are permanent Supabase article keys only.
+ * Entries are permanent Supabase article keys only. Resolution remains
+ * fail-closed because the public publication source supplies released records
+ * exclusively.
  */
 export const articlePlacementConfiguration: ArticlePlacementConfiguration = {
   homepage: {
@@ -26,7 +27,12 @@ export const articlePlacementConfiguration: ArticlePlacementConfiguration = {
   categories: {
     Travel: { highlightedArticleKeys: [] },
     Tech: { highlightedArticleKeys: [] },
-    Home: { highlightedArticleKeys: [] },
+    Home: {
+      highlightedArticleKeys: [
+        "slow-cookers-compared",
+        "clothes-dryers-compared",
+      ],
+    },
     Outdoor: { highlightedArticleKeys: [] },
     Lifestyle: { highlightedArticleKeys: [] },
   },

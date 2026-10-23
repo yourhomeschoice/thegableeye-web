@@ -1,9 +1,8 @@
-import nextEnv from "@next/env";
+
+import { loadEnvConfig } from "@next/env";
 import { loadPublicationArtifact } from "./publication-artifact.ts";
 import { loadPublicationCandidate } from "./publication-candidate.ts";
 import { requireValidPublicationArticle } from "../lib/publication/validation.ts";
-
-const { loadEnvConfig } = nextEnv;
 
 type PublicationRow = {
   article_key: unknown;
@@ -103,7 +102,9 @@ async function main() {
   }
 
   const url = requireEnvironment("SUPABASE_URL");
-  const serviceRoleKey = requireEnvironment("SUPABASE_SERVICE_ROLE_KEY");
+  const serviceRoleKey = requireEnvironment(
+    "SUPABASE_SERVICE_ROLE_KEY",
+  );
 
   let article;
 
@@ -188,7 +189,9 @@ async function main() {
     );
 
     if (currentRows.length !== 1) {
-      throw new Error("EXPECTED_ONE_CURRENT_PUBLISHED_ROW");
+      throw new Error(
+        "EXPECTED_ONE_CURRENT_PUBLISHED_ROW",
+      );
     }
 
     const currentRow = currentRows[0] as PublicationRow;
@@ -261,7 +264,8 @@ async function main() {
   }
 
   const response = await fetch(
-    url.replace(/\/$/, "") + "/rest/v1/publication_proposals",
+    url.replace(/\/$/, "") +
+      "/rest/v1/publication_proposals",
     {
       method: "POST",
       headers: {

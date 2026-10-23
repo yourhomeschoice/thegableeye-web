@@ -58,6 +58,38 @@ export class SupabasePublicationSource implements PublicationSource {
     return articles[0];
   }
 
+  /**
+   * Development-only inspection for a known, approved publication identity.
+   * This deliberately does not participate in the public release source.
+   */
+  async getPublishedArticleForLocalInspection(
+    articleKey: string,
+    expectedPath: string,
+    expectedVersion: number,
+  ): Promise<PublishedRecommendationComparisonArticle> {
+    if (process.env.NODE_ENV !== "development") {
+      throw new Error("Local publication inspection is available only in development.");
+    }
+
+    const articles = await this.getRows({
+      publication_status: "eq.PUBLISHED",
+      article_key: "eq." + articleKey,
+      version: "eq." + expectedVersion,
+      limit: "2",
+    });
+
+    if (articles.length !== 1) {
+      throw new Error("Local publication inspection requires exactly one published record.");
+    }
+
+    const article = articles[0];
+    if (article.articleKey !== articleKey || article.path !== expectedPath) {
+      throw new Error("Local publication inspection record identity does not match.");
+    }
+
+    return article;
+  }
+
   private async getRows(
     filters: Record<string, string>,
   ): Promise<readonly PublishedRecommendationComparisonArticle[]> {
