@@ -60,7 +60,8 @@ const latestPlaceholders = [
   },
 ];
 
-const showVisualFallbackCards = process.env.NODE_ENV === "development";
+// Keep empty public-release slots visible without implying an article is live.
+const showVisualFallbackCards = true;
 
 const latestVisualFallbackCards = [
   { id: "connectivity", title: "Connectivity preview", image: "/images/esim.webp", alt: "Abstract connectivity illustration" },
@@ -83,9 +84,9 @@ function HomepageVisualFallbackCard({
         {image ? <Image src={image} alt={alt ?? ""} fill sizes="(max-width: 760px) 100vw, (max-width: 1050px) 50vw, 25vw" style={{ objectFit: "cover" }} /> : <span>VISUAL PREVIEW</span>}
       </div>
       <div className="homepage-card-content">
-        <p className="eyebrow">Local visual preview</p>
+        <p className="eyebrow">Editorial placeholder</p>
         <h3 className="editorial">{title}</h3>
-        <p>Design-review placeholder only. This is not a published article or recommendation.</p>
+        <p>No article has been published in this space. This is not a recommendation.</p>
       </div>
     </article>
   );
@@ -244,8 +245,8 @@ export default async function Home() {
                         <p className="eyebrow">
                           {section.name.toUpperCase()} · {topic.toUpperCase()}
                         </p>
-                        <h3 className="editorial">{topic} preview</h3>
-                        <p>Local visual preview only. This is not a published article or recommendation.</p>
+                        <h3 className="editorial">Editorial article</h3>
+                        <p>No article has been published in this space. This is not a recommendation.</p>
                       </div>
                     </article>
                       ));

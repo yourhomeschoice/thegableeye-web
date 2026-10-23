@@ -7,16 +7,16 @@ import { SiteHeader } from "@/components/site-header";
 import { getResolvedArticlePlacements } from "@/lib/publication/placements";
 import type { PublishedRecommendationComparisonArticle } from "@/lib/publication/types";
 
-const showVisualPreviewCards = process.env.NODE_ENV === "development";
+const showVisualPreviewCards = true;
 
 const sections = [
-  { id: "kitchen", name: "Kitchen", detail: "Practical equipment for everyday cooking.", subcategories: ["Kitchen", "Kitchen Appliances", "Kitchen & Cooking"], previewTitles: ["A001 — Slow Cookers development preview", undefined, undefined] },
-  { id: "appliances", name: "Appliances", detail: "Useful appliances for daily routines.", subcategories: ["Appliances", "Home Essentials", "Laundry"], previewTitles: ["A002 — Clothes Dryers development preview", undefined, undefined] },
+  { id: "kitchen", name: "Kitchen", detail: "Practical equipment for everyday cooking.", subcategories: ["Kitchen", "Kitchen Appliances", "Kitchen & Cooking"], previewTitles: [undefined, undefined, undefined] },
+  { id: "appliances", name: "Appliances", detail: "Useful appliances for daily routines.", subcategories: ["Appliances", "Home Essentials", "Laundry"], previewTitles: [undefined, undefined, undefined] },
   { id: "all-about-coffee", name: "All About Coffee", detail: "Coffee-making equipment for different routines.", subcategories: ["All About Coffee", "Coffee Machines"], previewTitles: [undefined, undefined, undefined] },
 ] as const;
 
 function HomeVisualPreviewCard({ section, title }: { section: string; title?: string }) {
-  return <article className="travel-landing-guide"><div className="travel-landing-guide-image" aria-hidden="true"><span>VISUAL PREVIEW</span></div><div className="travel-landing-guide-copy"><p className="eyebrow">Local visual preview</p><h3 className="editorial">{title ?? `${section} preview`}</h3><p>Design-review placeholder only. This is not a published article or recommendation.</p></div></article>;
+  return <article className="travel-landing-guide"><div className="travel-landing-guide-image" aria-hidden="true"><span>VISUAL PREVIEW</span></div><div className="travel-landing-guide-copy"><p className="eyebrow">Editorial placeholder</p><h3 className="editorial">{title ?? `${section} article`}</h3><p>No article has been published in this space. This is not a recommendation.</p></div></article>;
 }
 
 export default async function Page() {

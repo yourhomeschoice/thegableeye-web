@@ -7,7 +7,7 @@ import { SiteHeader } from "@/components/site-header";
 import { getResolvedArticlePlacements } from "@/lib/publication/placements";
 import type { PublishedRecommendationComparisonArticle } from "@/lib/publication/types";
 
-const showVisualPreviewCards = process.env.NODE_ENV === "development";
+const showVisualPreviewCards = true;
 
 const sections = [
   { id: "connectivity", name: "Connectivity", detail: "eSIMs, mobile data and staying connected abroad.", legacySubcategory: "eSIMs & Connectivity" },
@@ -16,7 +16,7 @@ const sections = [
 ] as const;
 
 function TravelVisualPreviewCard({ section }: { section: string }) {
-  return <article className="travel-landing-guide"><div className="travel-landing-guide-image" aria-hidden="true"><span>VISUAL PREVIEW</span></div><div className="travel-landing-guide-copy"><p className="eyebrow">Local visual preview</p><h3 className="editorial">{section} preview</h3><p>Design-review placeholder only. This is not a published article or recommendation.</p></div></article>;
+  return <article className="travel-landing-guide"><div className="travel-landing-guide-image" aria-hidden="true"><span>VISUAL PREVIEW</span></div><div className="travel-landing-guide-copy"><p className="eyebrow">Editorial placeholder</p><h3 className="editorial">{section} article</h3><p>No article has been published in this space. This is not a recommendation.</p></div></article>;
 }
 
 export default async function TravelPage() {
