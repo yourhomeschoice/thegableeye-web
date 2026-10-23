@@ -1,4 +1,5 @@
 import { CategoryLandingPage, type CategoryLandingConfig } from "@/components/category-landing-page";
+import { publishedArticlesForCategory } from "@/lib/publication/indexing";
 import { getResolvedArticlePlacements } from "@/lib/publication/placements";
 
 // Launch placeholders only: no Supabase or test-article publication feed.
@@ -42,5 +43,5 @@ const config: CategoryLandingConfig = {
 
 export default async function Page() {
   const placements = await getResolvedArticlePlacements();
-  return <CategoryLandingPage config={config} placements={placements.categories.Tech} />;
+  return <CategoryLandingPage config={config} placements={placements.categories.Tech} articles={await publishedArticlesForCategory("Tech")} />;
 }

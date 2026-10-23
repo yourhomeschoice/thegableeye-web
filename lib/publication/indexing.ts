@@ -61,6 +61,18 @@ export function discoverPublishedArticlesForCategory(
   return sortByPath(articles.filter((article) => article.category === category));
 }
 
+/** Keeps curated article order while appending undisplayed public discoveries. */
+export function mergePublishedArticles(
+  ...collections: readonly (readonly PublishedRecommendationComparisonArticle[])[]
+): readonly PublishedRecommendationComparisonArticle[] {
+  const seen = new Set<string>();
+  return collections.flatMap((articles) => articles.filter((article) => {
+    if (seen.has(article.articleKey)) return false;
+    seen.add(article.articleKey);
+    return true;
+  }));
+}
+
 export async function publishedArticlesForCategory(
   category: PublicationCategory,
 ): Promise<readonly PublishedRecommendationComparisonArticle[]> {

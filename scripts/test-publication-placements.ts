@@ -106,6 +106,20 @@ const [homepageSource, techComponentSource] = await Promise.all([
 ]);
 assert.doesNotMatch(homepageSource, /section\.name === "Outdoor"/, "Outdoor is not artificially suppressed on the homepage");
 assert.match(techComponentSource, /placements\.topicArticles\[section\.name\]/, "Tech topic sections use release-gated topic placements");
+const categoryPageSources = await Promise.all([
+  "app/home/page.tsx",
+  "app/travel/page.tsx",
+  "app/outdoor/page.tsx",
+  "app/lifestyle/page.tsx",
+  "app/tech/page.tsx",
+  "components/category-landing-page.tsx",
+].map((file) => readFile(file, "utf8")));
+for (const source of [...categoryPageSources.slice(0, 4), categoryPageSources[5]]) {
+  assert.match(source, /remainingArticles/, "category browsing retains an undisplayed-article collection");
+}
+for (const source of categoryPageSources.slice(0, 5)) {
+  assert.match(source, /publishedArticlesForCategory/, "category pages use release-gated automatic discovery");
+}
 
 console.log("Publication placement resolution checks passed.");
 })().catch((error: unknown) => {

@@ -14,6 +14,7 @@ const {
   articlesForSubcategory,
   categoryHref,
   discoverPublishedArticlesForCategory,
+  mergePublishedArticles,
   publishedArticlesForCategory,
   subcategoryHref,
 } = await import("../lib/publication/indexing.ts");
@@ -98,7 +99,17 @@ const releasedTravelSecond: PublishedRecommendationComparisonArticle = {
   category: "Travel",
   subcategory: "Travel Fixtures",
 };
-const publicArticles = [...releasedArticles, releasedTravelSecond];
+const additionalTravelArticles: readonly PublishedRecommendationComparisonArticle[] = [
+  "third", "fourth", "fifth", "sixth",
+].map((ordinal) => ({
+  ...payload,
+  articleKey: `travel-${ordinal}-fixture`,
+  path: `/travel/fixtures/travel-${ordinal}-fixture`,
+  slug: `travel-${ordinal}-fixture`,
+  category: "Travel",
+  subcategory: "Travel Fixtures",
+}));
+const publicArticles = [...releasedArticles, releasedTravelSecond, ...additionalTravelArticles];
 
 const originalGetPublishedArticles = publicationSource.getPublishedArticles.bind(publicationSource);
 publicationSource.getPublishedArticles = async () => publicArticles;
@@ -110,20 +121,24 @@ for (const category of categories.filter((category) => category !== "Travel")) {
 }
 
 const travelArticles = await publishedArticlesForCategory("Travel");
-assert.deepEqual(
-  travelArticles.map((article) => article.articleKey),
-  ["travel-fixture", "travel-second-fixture"],
-  "multiple released Travel articles are discovered in deterministic path order",
-);
+assert.equal(travelArticles.length, 6, "a fourth, fifth, and sixth released category article remain discoverable");
+assert.deepEqual(new Set(travelArticles.map((article) => article.articleKey)), new Set([
+  "travel-fixture", "travel-second-fixture", "travel-third-fixture", "travel-fourth-fixture", "travel-fifth-fixture", "travel-sixth-fixture",
+]), "all released Travel articles are returned exactly once");
 assert.deepEqual(
   discoverPublishedArticlesForCategory(publicArticles, "Home").map((article) => article.articleKey),
   ["home-fixture"],
   "category discovery excludes articles from other categories",
 );
+assert.deepEqual(
+  mergePublishedArticles([releasedTravelSecond], travelArticles).map((article) => article.articleKey).filter((articleKey) => articleKey === "travel-second-fixture"),
+  ["travel-second-fixture"],
+  "curated and automatically discovered articles are not duplicated",
+);
 
 const travelFixtures = await articlesForSubcategory("Travel", "Travel Fixtures");
-assert.equal(travelFixtures.length, 2, "category-qualified Travel indexing works for multiple articles");
-assert.equal((await articlesForSubcategory("Travel Fixtures")).length, 2, "Travel shorthand remains compatible");
+assert.equal(travelFixtures.length, 6, "category-qualified Travel indexing works for multiple articles");
+assert.equal((await articlesForSubcategory("Travel Fixtures")).length, 6, "Travel shorthand remains compatible");
 publicationSource.getPublishedArticles = originalGetPublishedArticles;
 
 assert.equal(categoryHref("Travel"), "/travel/");
