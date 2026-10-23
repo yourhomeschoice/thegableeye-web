@@ -95,7 +95,9 @@ export function CategoryLandingPage({
               <p>{section.detail}</p>
             </div>
             <div className="travel-landing-guide-grid">
-              {section.guides.map((guide) => <GuidePlaceholder key={guide.title} guide={{ ...guide, category: section.name }} />)}
+              {(placements.topicArticles[section.name] ?? []).length
+                ? (placements.topicArticles[section.name] ?? []).map((article) => <CategoryPublicationPlacementCard key={article.articleKey} article={article} />)
+                : section.guides.map((guide) => <GuidePlaceholder key={guide.title} guide={{ ...guide, category: section.name }} />)}
             </div>
           </section>
         ))}

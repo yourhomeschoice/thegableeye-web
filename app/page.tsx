@@ -4,6 +4,7 @@ import { SiteFooter } from "@/components/site-footer";
 import Image from "next/image";
 import { AffiliateDisclosure } from "@/components/affiliate-disclosure";
 import { HomepagePublicationPlacementCard } from "@/components/publication-placement-card";
+import { PublicationImage } from "@/components/publication-image";
 import { getResolvedArticlePlacements } from "@/lib/publication/placements";
 import type { PublicationCategory } from "@/lib/publication/indexing";
 import type { PublishedRecommendationComparisonArticle } from "@/lib/publication/types";
@@ -122,6 +123,8 @@ const homepageSections = [
 export default async function Home() {
   const placements = await getResolvedArticlePlacements();
   const homepagePlacements = placements.homepage;
+  const homepageSidebarPlacements = placements.homepageSidebar;
+  const sidebarPopularArticles = homepageSidebarPlacements.highlighted.slice(0, 4);
   void latestPlaceholders;
 
   return (
@@ -228,12 +231,10 @@ export default async function Home() {
 
                 <div className="homepage-latest-grid">
                   {(() => {
-                    const articles = section.name === "Outdoor"
-                      ? []
-                      : [
-                          placements.categories[section.name as PublicationCategory].featured,
-                          ...placements.categories[section.name as PublicationCategory].highlighted,
-                        ].filter((article): article is PublishedRecommendationComparisonArticle => article !== undefined);
+                    const articles = [
+                      placements.categories[section.name as PublicationCategory].featured,
+                      ...placements.categories[section.name as PublicationCategory].highlighted,
+                    ].filter((article): article is PublishedRecommendationComparisonArticle => article !== undefined);
                     return articles.length
                       ? articles.map((article) => <HomepagePublicationPlacementCard key={article.articleKey} article={article} />)
                       : (showVisualFallbackCards ? section.topics : []).map((topic) => (
@@ -259,11 +260,23 @@ export default async function Home() {
           <aside className="homepage-sidebar" aria-label="Featured and popular guides">
             <section className="homepage-sidebar-feature">
               <p className="eyebrow">Featured guide</p>
-              <div className="homepage-sidebar-image">
-                <span>EDITORIAL IMAGE</span>
-              </div>
-              <h2 className="editorial">Editorial guide</h2>
-              <p>A human-approved guide will appear here.</p>
+              {homepageSidebarPlacements.featured ? (
+                <>
+                  <Link className="homepage-sidebar-image publication-placement-image" href={homepageSidebarPlacements.featured.path} aria-label={homepageSidebarPlacements.featured.title}>
+                    <PublicationImage image={homepageSidebarPlacements.featured.image} variant="card" />
+                  </Link>
+                  <h2 className="editorial"><Link href={homepageSidebarPlacements.featured.path}>{homepageSidebarPlacements.featured.title}</Link></h2>
+                  <p>{homepageSidebarPlacements.featured.standfirst}</p>
+                </>
+              ) : (
+                <>
+                  <div className="homepage-sidebar-image">
+                    <span>EDITORIAL IMAGE</span>
+                  </div>
+                  <h2 className="editorial">Editorial guide</h2>
+                  <p>A human-approved guide will appear here.</p>
+                </>
+              )}
             </section>
 
             <section className="homepage-popular">
@@ -271,8 +284,16 @@ export default async function Home() {
               <p className="homepage-sidebar-note">
                 Selected guides will appear here as the publication grows.
               </p>
-              {[1, 2, 3, 4].map((number) => (
-                <div className="homepage-popular-item" key={number}>
+              {sidebarPopularArticles.map((article) => (
+                <div className="homepage-popular-item" key={article.articleKey}>
+                  <Link className="homepage-popular-image publication-placement-image" href={article.path} aria-label={article.title}>
+                    <PublicationImage image={article.image} variant="card" />
+                  </Link>
+                  <Link href={article.path}>{article.title}</Link>
+                </div>
+              ))}
+              {Array.from({ length: 4 - sidebarPopularArticles.length }, (_, index) => (
+                <div className="homepage-popular-item" key={`placeholder-${index}`}>
                   <div className="homepage-popular-image" aria-hidden="true" />
                   <span>Editorial guide</span>
                 </div>

@@ -8,10 +8,13 @@ import type { PublishedRecommendationComparisonArticle } from "./types";
 export type ArticlePlacementCollection = Readonly<{
   featuredArticleKey?: string;
   highlightedArticleKeys: readonly string[];
+  /** Exact subcategory labels mapped to editorially curated article keys. */
+  topicArticleKeys?: Readonly<Record<string, readonly string[]>>;
 }>;
 
 export type ArticlePlacementConfiguration = Readonly<{
   homepage: ArticlePlacementCollection;
+  homepageSidebar: ArticlePlacementCollection;
   categories: Readonly<Record<PublicationCategory, ArticlePlacementCollection>>;
 }>;
 
@@ -22,6 +25,9 @@ export type ArticlePlacementConfiguration = Readonly<{
  */
 export const articlePlacementConfiguration: ArticlePlacementConfiguration = {
   homepage: {
+    highlightedArticleKeys: [],
+  },
+  homepageSidebar: {
     highlightedArticleKeys: [],
   },
   categories: {
@@ -41,10 +47,12 @@ export const articlePlacementConfiguration: ArticlePlacementConfiguration = {
 export type ResolvedArticlePlacementCollection = Readonly<{
   featured?: PublishedRecommendationComparisonArticle;
   highlighted: readonly PublishedRecommendationComparisonArticle[];
+  topicArticles: Readonly<Record<string, readonly PublishedRecommendationComparisonArticle[]>>;
 }>;
 
 export type ResolvedArticlePlacements = Readonly<{
   homepage: ResolvedArticlePlacementCollection;
+  homepageSidebar: ResolvedArticlePlacementCollection;
   categories: Readonly<Record<PublicationCategory, ResolvedArticlePlacementCollection>>;
 }>;
 
@@ -73,7 +81,20 @@ function resolveCollection(
     return article ? [article] : [];
   });
 
-  return { featured, highlighted };
+  const topicArticles = Object.fromEntries(
+    Object.entries(collection.topicArticleKeys ?? {}).map(([subcategory, articleKeys]) => [
+      subcategory,
+      resolveCollection(
+        { highlightedArticleKeys: articleKeys },
+        articles.filter((article) =>
+          (category === undefined || article.category === category) &&
+          article.subcategory === subcategory,
+        ),
+      ).highlighted,
+    ]),
+  ) as Record<string, readonly PublishedRecommendationComparisonArticle[]>;
+
+  return { featured, highlighted, topicArticles };
 }
 
 /**
@@ -93,6 +114,7 @@ export function resolveArticlePlacements(
 
   return {
     homepage: resolveCollection(configuration.homepage, articles),
+    homepageSidebar: resolveCollection(configuration.homepageSidebar, articles),
     categories,
   };
 }

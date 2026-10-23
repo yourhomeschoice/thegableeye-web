@@ -15,6 +15,7 @@ const {
 function article(
   articleKey: string,
   category: "Travel" | "Tech" | "Home" | "Outdoor" | "Lifestyle",
+  subcategory = "Fixtures",
 ): PublishedRecommendationComparisonArticle {
   return {
     articleKey,
@@ -22,7 +23,7 @@ function article(
     path: `/${category.toLowerCase()}/fixtures/${articleKey}`,
     slug: articleKey,
     category,
-    subcategory: "Fixtures",
+    subcategory,
     articleType: "Guide",
     title: `${articleKey} title`,
     standfirst: `${articleKey} summary.`,
@@ -36,6 +37,8 @@ const published = [
   article("travel-alpha", "Travel"),
   article("travel-beta", "Travel"),
   article("tech-alpha", "Tech"),
+  article("tech-laptop", "Tech", "Laptops"),
+  article("outdoor-camping", "Outdoor", "Camping"),
 ];
 
 const configuration: ArticlePlacementConfiguration = {
@@ -43,14 +46,25 @@ const configuration: ArticlePlacementConfiguration = {
     featuredArticleKey: "travel-alpha",
     highlightedArticleKeys: ["travel-alpha", "missing", "travel-beta", "travel-beta"],
   },
+  homepageSidebar: {
+    featuredArticleKey: "travel-beta",
+    highlightedArticleKeys: ["travel-alpha", "missing", "unreleased", "travel-alpha"],
+  },
   categories: {
     Travel: {
       featuredArticleKey: "tech-alpha",
       highlightedArticleKeys: ["travel-beta", "travel-beta", "travel-alpha"],
     },
-    Tech: { featuredArticleKey: "tech-alpha", highlightedArticleKeys: [] },
+    Tech: {
+      featuredArticleKey: "tech-alpha",
+      highlightedArticleKeys: [],
+      topicArticleKeys: {
+        Laptops: ["tech-laptop", "travel-alpha", "missing", "tech-laptop"],
+        Smartphones: ["tech-laptop"],
+      },
+    },
     Home: { highlightedArticleKeys: ["missing"] },
-    Outdoor: { highlightedArticleKeys: [] },
+    Outdoor: { highlightedArticleKeys: ["outdoor-camping"] },
     Lifestyle: { highlightedArticleKeys: [] },
   },
 };
@@ -61,11 +75,16 @@ assert.deepEqual(resolved.homepage.highlighted.map((item) => item.articleKey), [
 assert.equal(resolved.categories.Travel.featured, undefined, "a cross-category featured key is excluded");
 assert.deepEqual(resolved.categories.Travel.highlighted.map((item) => item.articleKey), ["travel-beta", "travel-alpha"], "category placement is filtered and ordered");
 assert.equal(resolved.categories.Tech.featured?.articleKey, "tech-alpha");
+assert.deepEqual(resolved.homepageSidebar.featured?.articleKey, "travel-beta", "sidebar featured placement resolves from public articles");
+assert.deepEqual(resolved.homepageSidebar.highlighted.map((item) => item.articleKey), ["travel-alpha"], "missing, unreleased, and duplicate sidebar placements are excluded");
+assert.deepEqual(resolved.categories.Outdoor.highlighted.map((item) => item.articleKey), ["outdoor-camping"], "Outdoor homepage placements resolve from the release-gated category collection");
+assert.deepEqual(resolved.categories.Tech.topicArticles.Laptops?.map((item) => item.articleKey), ["tech-laptop"], "Tech topic placements require matching category and subcategory");
+assert.deepEqual(resolved.categories.Tech.topicArticles.Smartphones, [], "mismatched Tech subcategory placements are excluded");
 assert.deepEqual(resolved.categories.Home.highlighted, [], "missing and unreleased keys do not create cards");
-assert.deepEqual(resolved.categories.Outdoor.highlighted, []);
 assert.deepEqual(resolved.categories.Lifestyle.highlighted, []);
 
 assert.deepEqual(articlePlacementConfiguration.homepage.highlightedArticleKeys, [], "homepage does not feature pending articles");
+assert.deepEqual(articlePlacementConfiguration.homepageSidebar.highlightedArticleKeys, [], "homepage sidebar does not feature pending articles");
 assert.deepEqual(articlePlacementConfiguration.categories.Home.highlightedArticleKeys, ["slow-cookers-compared", "clothes-dryers-compared"], "Home uses permanent A001/A002 article keys");
 for (const category of ["Travel", "Tech", "Outdoor", "Lifestyle"] as const) {
   assert.deepEqual(articlePlacementConfiguration.categories[category].highlightedArticleKeys, [], `${category} live category configuration remains empty`);
@@ -81,6 +100,12 @@ const files = await Promise.all([
   "lib/publication/placements.ts",
 ].map((file) => readFile(file, "utf8")));
 assert.doesNotMatch(files.join("\n"), /development-preview/, "production placement paths do not leak development previews");
+const [homepageSource, techComponentSource] = await Promise.all([
+  readFile("app/page.tsx", "utf8"),
+  readFile("components/category-landing-page.tsx", "utf8"),
+]);
+assert.doesNotMatch(homepageSource, /section\.name === "Outdoor"/, "Outdoor is not artificially suppressed on the homepage");
+assert.match(techComponentSource, /placements\.topicArticles\[section\.name\]/, "Tech topic sections use release-gated topic placements");
 
 console.log("Publication placement resolution checks passed.");
 })().catch((error: unknown) => {
