@@ -49,14 +49,25 @@ function sortByPath(
   return [...articles].sort((left, right) => left.path.localeCompare(right.path));
 }
 
+/**
+ * Deterministically selects public-source articles for one category.
+ * Callers must supply records from the public publication source; this helper
+ * intentionally has no database or preview-data access of its own.
+ */
+export function discoverPublishedArticlesForCategory(
+  articles: readonly PublishedRecommendationComparisonArticle[],
+  category: PublicationCategory,
+): readonly PublishedRecommendationComparisonArticle[] {
+  return sortByPath(articles.filter((article) => article.category === category));
+}
+
 export async function publishedArticlesForCategory(
   category: PublicationCategory,
 ): Promise<readonly PublishedRecommendationComparisonArticle[]> {
   // publicationSource is the public-release gate; never index raw Supabase rows.
-  return sortByPath(
-    (await publicationSource.getPublishedArticles()).filter(
-      (article) => article.category === category,
-    ),
+  return discoverPublishedArticlesForCategory(
+    await publicationSource.getPublishedArticles(),
+    category,
   );
 }
 

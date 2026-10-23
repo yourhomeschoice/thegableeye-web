@@ -13,6 +13,7 @@ const { publicationSource } = await import("../lib/publication/publication-sourc
 const {
   articlesForSubcategory,
   categoryHref,
+  discoverPublishedArticlesForCategory,
   publishedArticlesForCategory,
   subcategoryHref,
 } = await import("../lib/publication/indexing.ts");
@@ -89,19 +90,40 @@ const releasedArticles: readonly PublishedRecommendationComparisonArticle[] = ca
   path: `/${category.toLowerCase()}/fixtures/${category.toLowerCase()}-fixture` as `/${string}`,
   slug: `${category.toLowerCase()}-fixture`,
 }));
+const releasedTravelSecond: PublishedRecommendationComparisonArticle = {
+  ...payload,
+  articleKey: "travel-second-fixture",
+  path: "/travel/fixtures/travel-second-fixture",
+  slug: "travel-second-fixture",
+  category: "Travel",
+  subcategory: "Travel Fixtures",
+};
+const publicArticles = [...releasedArticles, releasedTravelSecond];
 
 const originalGetPublishedArticles = publicationSource.getPublishedArticles.bind(publicationSource);
-publicationSource.getPublishedArticles = async () => releasedArticles;
+publicationSource.getPublishedArticles = async () => publicArticles;
 
-for (const category of categories) {
+for (const category of categories.filter((category) => category !== "Travel")) {
   const articles = await publishedArticlesForCategory(category);
   assert.equal(articles.length, 1, `${category} is indexed`);
   assert.equal(articles[0].articleKey, `${category.toLowerCase()}-fixture`);
 }
 
+const travelArticles = await publishedArticlesForCategory("Travel");
+assert.deepEqual(
+  travelArticles.map((article) => article.articleKey),
+  ["travel-fixture", "travel-second-fixture"],
+  "multiple released Travel articles are discovered in deterministic path order",
+);
+assert.deepEqual(
+  discoverPublishedArticlesForCategory(publicArticles, "Home").map((article) => article.articleKey),
+  ["home-fixture"],
+  "category discovery excludes articles from other categories",
+);
+
 const travelFixtures = await articlesForSubcategory("Travel", "Travel Fixtures");
-assert.equal(travelFixtures.length, 1, "category-qualified Travel indexing works");
-assert.equal((await articlesForSubcategory("Travel Fixtures")).length, 1, "Travel shorthand remains compatible");
+assert.equal(travelFixtures.length, 2, "category-qualified Travel indexing works for multiple articles");
+assert.equal((await articlesForSubcategory("Travel Fixtures")).length, 2, "Travel shorthand remains compatible");
 publicationSource.getPublishedArticles = originalGetPublishedArticles;
 
 assert.equal(categoryHref("Travel"), "/travel/");
