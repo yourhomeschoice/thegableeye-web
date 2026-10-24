@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { AffiliateDisclosure } from "@/components/affiliate-disclosure";
 
 export type HouseGuideItem = Readonly<{ href: string; label: string }>;
 export type HouseComparisonColumn = Readonly<{ label: string; width?: string }>;
@@ -15,8 +16,9 @@ export function HouseArticleHero({ src, alt, caption, width = 1600, height = 900
   return <figure className="house-article-hero"><Image src={src} alt={alt} width={width} height={height} priority sizes="(max-width: 760px) calc(100vw - 32px), 760px" />{caption && <figcaption>{caption}</figcaption>}</figure>;
 }
 
-export function HouseGuideAndDisclosure({ items, children }: { items: readonly HouseGuideItem[]; children: ReactNode }) {
-  return <>{items.length > 0 && <nav className="house-article-guide-nav" aria-label="In this guide"><p className="eyebrow">In this guide</p><ul>{items.map((item) => <li key={item.href}><a href={item.href}>{item.label}</a></li>)}</ul></nav>}<p className="house-article-disclosure"><Link href="/affiliate-disclosure/">Affiliate disclosure</Link>: {children}</p></>;
+export function HouseGuideAndDisclosure({ items, children }: { items: readonly HouseGuideItem[]; children?: ReactNode }) {
+  void children;
+  return <>{items.length > 0 && <nav className="house-article-guide-nav" aria-label="In this guide"><p className="eyebrow">In this guide</p><ul>{items.map((item) => <li key={item.href}><a href={item.href}>{item.label}</a></li>)}</ul></nav>}<AffiliateDisclosure variant="article" /></>;
 }
 
 export function HouseVerdict({ id, children }: { id: string; children: ReactNode }) {

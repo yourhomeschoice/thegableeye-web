@@ -7,7 +7,9 @@ $ErrorActionPreference='Stop'
 if (!(Test-Path -LiteralPath $SourceDocx -PathType Leaf)) { throw 'Approved DOCX does not exist.' }
 if (!(Test-Path -LiteralPath $MetadataFile -PathType Leaf)) { throw 'Metadata file does not exist.' }
 $meta=Get-Content -LiteralPath $MetadataFile -Raw|ConvertFrom-Json
-if (!$meta.article_key -or !$meta.baseline_key -or !$meta.PSObject.Properties['heading_paragraphs'] -or !$meta.expected_table_count) { throw 'Metadata must declare article_key, baseline_key, heading_paragraphs, and expected_table_count.' }
+if (!$meta.article_key -or !$meta.baseline_key -or !$meta.PSObject.Properties['heading_paragraphs'] -or !$meta.PSObject.Properties['expected_table_count'] -or !$meta.PSObject.Properties['title_paragraph'] -or !$meta.preview.title -or !$meta.preview.category) { throw 'Metadata must declare article_key, baseline_key, title_paragraph, heading_paragraphs, expected_table_count, and preview title/category.' }
+if ($meta.expected_table_count -notmatch '^\d+$') { throw 'expected_table_count must be a non-negative integer.' }
+if ($meta.title_paragraph -notmatch '^[1-9]\d*$') { throw 'title_paragraph must be a positive paragraph index.' }
 New-Item -ItemType Directory -Force -Path $OutputDirectory|Out-Null
 $htmlPath=Join-Path $OutputDirectory ($meta.baseline_key+'.html')
 $manifestPath=Join-Path $OutputDirectory ($meta.baseline_key+'.validation.json')
@@ -23,7 +25,7 @@ try {
     if($node.LocalName -eq 'p') {
       $paragraphIndex++;$parts=@();foreach($run in $node.SelectNodes('.//w:r',$ns)) { $text=(($run.SelectNodes('.//w:t',$ns)|% InnerText)-join ''); if($text) { $escaped=[Security.SecurityElement]::Escape($text);if($run.SelectSingleNode('./w:rPr/w:b',$ns)){$escaped="<strong>$escaped</strong>"};if($run.SelectSingleNode('./w:rPr/w:i',$ns)){$escaped="<em>$escaped</em>"};$parts+=$escaped } }
       $content=$parts -join '';if(!$content){continue};$paragraphs+=[Security.SecurityElement]::Escape((($node.SelectNodes('.//w:t',$ns)|% InnerText)-join ''))
-      $tag=if($paragraphIndex -eq 1){'h1'}elseif($meta.heading_paragraphs -contains $paragraphIndex){'h2'}else{'p'};$html+="<$tag>$content</$tag>"
+      $tag=if($paragraphIndex -eq [int]$meta.title_paragraph){'h1'}elseif($meta.heading_paragraphs -contains $paragraphIndex){'h2'}else{'p'};$html+="<$tag>$content</$tag>"
     } elseif($node.LocalName -eq 'tbl') {
       $grid=@();$html+='<div class="article-table-scroll"><table><tbody>';foreach($row in $node.SelectNodes('./w:tr',$ns)){$cells=@();$html+='<tr>';foreach($cell in $row.SelectNodes('./w:tc',$ns)){$value=(($cell.SelectNodes('.//w:t',$ns)|% InnerText)-join '');$cells+=$value;$html+='<td>'+[Security.SecurityElement]::Escape($value)+'</td>'};$grid+=,@($cells);$html+='</tr>'};$html+='</tbody></table></div>';$tables+=,@($grid)
     } elseif($node.LocalName -ne 'sectPr') { throw "Unsupported Word body structure: $($node.LocalName)." }
@@ -34,7 +36,7 @@ try {
   $tempHtml="$htmlPath.tmp";$tempManifest="$manifestPath.tmp";$utf8=[Text.UTF8Encoding]::new($false)
   [IO.File]::WriteAllText($tempHtml,$html,$utf8)
   $hash=([Security.Cryptography.SHA256]::Create().ComputeHash([IO.File]::ReadAllBytes($tempHtml))|% ToString x2)-join ''
-  $manifest=[ordered]@{baseline_key=$meta.baseline_key;article_key=$meta.article_key;source_filename=(Split-Path $SourceDocx -Leaf);sha256=$hash;paragraphs=$paragraphs;tables=$tables;preview=$meta.preview;hyperlink_destinations='ignored'}|ConvertTo-Json -Depth 12
+  $manifest=[ordered]@{baseline_key=$meta.baseline_key;article_key=$meta.article_key;source_article_id=$meta.source_article_id;source_filename=(Split-Path $SourceDocx -Leaf);canonical_path=$meta.canonical_path;slug=$meta.slug;category=$meta.category;subcategory=$meta.subcategory;approved_title=$meta.preview.title;approved_standfirst=$meta.approved_standfirst;author=$meta.author;research_date=$meta.research_date;title_paragraph=$meta.title_paragraph;heading_paragraphs=$meta.heading_paragraphs;sha256=$hash;paragraphs=$paragraphs;tables=$tables;preview=$meta.preview;hyperlink_destinations='ignored'}|ConvertTo-Json -Depth 12
   [IO.File]::WriteAllText($tempManifest,$manifest,$utf8)
   Move-Item -LiteralPath $tempHtml -Destination $htmlPath -Force;Move-Item -LiteralPath $tempManifest -Destination $manifestPath -Force
 } finally {$zip.Dispose()}

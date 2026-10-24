@@ -1,6 +1,7 @@
 {
   "baseline_key": "coffee-espresso-machine-ebs-007-v1",
   "article_key": "coffee-espresso-machine-comparison",
+  "title_paragraph": 1,
   "heading_paragraphs": [7, 15, 21, 28, 42, 44, 50, 55, 58],
   "expected_table_count": 1,
   "required_prices": ["$489.99", "$499.00", "$449.99", "$699.95"]

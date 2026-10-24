@@ -1,0 +1,19 @@
+{
+  "kind": "CANONICAL_URL_MIGRATION_PROPOSAL",
+  "status": "AWAITING_HUMAN_APPROVAL",
+  "instructions": "Do not execute this artifact automatically. Preserve each article_key and create an approved replacement publication version whose payload.path and publications.path match proposed_path. Add only the proposed path to the public release allowlist after final release approval.",
+  "articles": [
+    { "source_article_id": "A001", "article_key": "slow-cookers-compared", "current_path": "/home/slow-cookers-compared", "proposed_path": "/home/kitchen/slow-cookers-compared" },
+    { "source_article_id": "A002", "article_key": "clothes-dryers-compared", "current_path": "/home/clothes-dryers-compared", "proposed_path": "/home/appliances/clothes-dryers-compared" },
+    { "source_article_id": "A003", "article_key": "espresso-machine-comparison", "proposed_path": "/home/all-about-coffee/espresso-machine" },
+    { "source_article_id": "A004", "article_key": "coffee-makers-compared", "proposed_path": "/home/all-about-coffee/coffee-makers-compared" },
+    { "source_article_id": "A005", "article_key": "fridge-freezers-compared", "proposed_path": "/home/appliances/fridge-freezers-compared" },
+    { "source_article_id": "A006", "article_key": "dishwashers-compared", "proposed_path": "/home/appliances/dishwashers-compared" },
+    { "source_article_id": "A007", "article_key": "washing-machines-compared", "proposed_path": "/home/appliances/washing-machines-compared" },
+    { "source_article_id": "A008", "article_key": "air-fryers-compared", "proposed_path": "/home/kitchen/air-fryers-compared" },
+    { "source_article_id": "A009", "article_key": "blenders-compared", "proposed_path": "/home/kitchen/blenders-compared" },
+    { "source_article_id": "A010", "article_key": "juicers-compared", "proposed_path": "/home/kitchen/juicers-compared" },
+    { "source_article_id": "A011", "article_key": "travel-adapter-comparison", "proposed_path": "/travel/travel-essentials/travel-adapter" },
+    { "source_article_id": "A012", "article_key": "luggage-tags-compared", "proposed_path": "/travel/travel-essentials/luggage-tags-compared" }
+  ]
+}

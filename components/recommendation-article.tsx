@@ -80,9 +80,7 @@ function HouseArticle({ article, relatedArticles = [] }: RecommendationArticlePr
       <ArticleChrome article={article} suppressAffiliateDisclosure />
       {article.image && <HouseArticleHero src={article.image.src} alt={article.image.alt} caption={article.image.caption} width={article.image.width} height={article.image.height} />}
       <div className="article-reading house-article-reading">
-        <HouseGuideAndDisclosure items={guide.map((item) => ({ href: `#${item.targetId}`, label: item.label }))}>
-          The Gable Eye may earn a commission if you buy through certain links in our articles, at no additional cost to you. This does not influence our editorial recommendations.
-        </HouseGuideAndDisclosure>
+        <HouseGuideAndDisclosure items={guide.map((item) => ({ href: `#${item.targetId}`, label: item.label }))} />
         {sections.map((section) => <HouseSection key={section.id} section={section} />)}
         {!hasMethodology && <HouseEditorialIndependence />}
       </div>

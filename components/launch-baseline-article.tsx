@@ -19,6 +19,7 @@ type LaunchBaselineArticleProps = Readonly<{
   /** Typed tables replace only their matching immutable HTML slice. */
   tableContent?: readonly ReactNode[];
   disclosure?: ReactNode;
+  editorialIndependence?: ReactNode;
 }>;
 
 /** Renders approved editorial HTML with optional typed tables and disclosure. */
@@ -30,6 +31,7 @@ export function LaunchBaselineArticle({
   ],
   tableContent,
   disclosure,
+  editorialIndependence,
 }: LaunchBaselineArticleProps) {
   const segments = segmentApprovedHtmlByTablePresentations(
     editorialHtml,
@@ -114,6 +116,7 @@ export function LaunchBaselineArticle({
             />
           );
         })}
+        {editorialIndependence}
       </article>
     </main>
   );
